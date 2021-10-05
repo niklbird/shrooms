@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soils>
+  <soil category="todo">
+    <name lang="de">Podsol-Regosol / Lockersyrosem aus trockenen Sanden</name>
+    <ph>Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Niedrig</water>
+    <typ>Sand</typ>
+  </soil>
+    <soil category="todo">
+    <name lang="de">Wattboden im Gezeitenbereich der Nordsee</name>
+    <ph>Neutral</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0</score>
+    <water>Hoch</water>
+    <typ>Watt</typ>
+  </soil>
+    <soil category="todo">
+    <name lang="de">Kalkmarsch aus marinen Ablagerungen</name>
+    <ph>Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.85</score>
+    <water>Mittel</water>
+    <typ>Kalk</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Kleimarsch aus brackischen Ablagerungen</name>
+    <ph>Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.7</score>
+    <water>Hoch</water>
+    <typ>Kalk</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Kleimarsch aus fluviatilen Ablagerungen</name>
+    <ph>Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.7</score>
+    <water>Hoch</water>
+    <typ>Kalk</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Niedermoorboden</name>
+    <ph>Neutral,Basisch</ph>
+    <nitrat>Niedrig,Neutral</nitrat>
+    <score>0.1</score>
+    <water>Hoch</water>
+    <typ>Moor</typ>
+  </soil>
+    <soil category="todo">
+    <name lang="de">Hochmoorboden</name>
+    <ph>Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.1</score>
+    <water>Hoch</water>
+    <typ>Moor</typ>
+  </soil>
+      <soil category="todo">
+    <name lang="de">Auenboden / Gley aus lehmigen bis tonigen Auensedimenten</name>
+    <ph>Sauer,Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.8</score>
+    <water>Hoch</water>
+    <typ>Lehm,Ton</typ>
+  </soil>
+   <soil category="todo">
+    <name lang="de">Gley-Tschernosem aus kalkhaltigen, tonig schluffigen Ablagerungen in Flusstälern der Schwarzerdegebiete</name>
+    <ph>Sauer,Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>1.0</score>
+    <water>Hoch</water>
+    <typ>Kalk,Ton,Schluff</typ>
+  </soil>
+    <soil category="todo">
+    <name lang="de">Auenboden / Gley aus sandigen bis lehmigen Flusssedimenten</name>
+    <ph>Sauer,Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.8</score>
+    <water>Hoch</water>
+    <typ>Sand,Lehm</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Auenboden / Gley aus sandigen bis tonigen Flusssedimenten in kleinflächigem Wechsel</name>
+    <ph>Sauer,Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.8</score>
+    <water>Hoch</water>
+    <typ>Sand,Lehm</typ>
+  </soil>
+    <soil category="todo">
+    <name lang="de">Gley der sandigen Urstromtäler und Niederungen</name>
+    <ph>Sauer,Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.8</score>
+    <water>Hoch</water>
+    <typ>Sand</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Pararendzina / Auenpararendzina aus kalkhaltigen, sandig-lehmigen Hochflut- und Auenablagerungen</name>
+    <ph>Neutral,Basisch</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Neutral</water>
+    <typ>Kalk,Lehm,Sand</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Parabraunerde aus schluffig-lehmigen Deckschichten auf eiszeitlichen Schotterplatten</name>
+    <ph>Neutral,Basisch</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Neutral</water>
+    <typ>Lehm,Schluff</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Parabraunerde aus lössbedeckten, lehmig-sandigen Terrassenablagerungen</name>
+    <ph>Neutral,Basisch</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Neutral</water>
+    <typ>Lehm,Sand,Löss</typ>
+  </soil>
+    <soil category="todo">
+    <name lang="de">Podsol-Baunerde aus sandigen Terrassenablagerungen</name>
+    <ph>Neutral</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.4</score>
+    <water>Neutral</water>
+    <typ>Sand</typ>
+  </soil>
+      <soil category="todo">
+    <name lang="de">Podsol / Braunerde-Podsol / Gley-Podsol aus sandigen Flussablagerungen</name>
+    <ph>Neutral</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.4</score>
+    <water>Hoch</water>
+    <typ>Sand</typ>
+  </soil>
+    <soil category="todo">
+    <name lang="de">Braunerde / Parabraunerde / Pararendzina aus lössvermischten Tertiärablagerungen</name>
+    <ph>Neutral,Basisch</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Mittel</water>
+    <typ>Löss</typ>
+  </soil>
+   <soil category="todo">
+    <name lang="de">Parabraunerde / Fahlerde / Pseudogley-Parabraunerde aus Geschiebelehm</name>
+    <ph>Sauer</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Mittel</water>
+    <typ>Lehm</typ>
+  </soil>
+     <soil category="todo">
+    <name lang="de">Parabraunerde-Tschernosem / Parabraunerde aus Geschiebemergel oder Beckenablagerungen</name>
+    <ph>Neutral,Sauer</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Mittel</water>
+    <typ>Lehm</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Braunerde / Parabraunerde / Pararendzina aus lehmig-sandigen, kalkhaltigen Moränenablagerungen</name>
+    <ph>Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Mittel</water>
+    <typ>Lehm,Sand,Kalk</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Pseudogley aus Geschiebedecksand über Geschiebelehm</name>
+    <ph>Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.7</score>
+    <water>Hoch</water>
+    <typ>Lehm,Sand</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Pseudogley aus lehmig-sandigem Geschiebemergel</name>
+    <ph>Neutral</ph>
+    <nitrat>Neutral</nitrat>
+    <score>0.7</score>
+    <water>Hoch</water>
+    <typ>Lehm,Sand</typ>
+  </soil>
+  <soil category="todo">
+    <name lang="de">Pseudogley-Tschernosem aus Geschiebelehm mit lehmig-sandiger Deckschicht</name>
+    <ph>Neutral</ph>
+    <nitrat>Neutral</nitrat>
+    <score>0.7</score>
+    <water>Hoch</water>
+    <typ>Lehm,Sand</typ>
+  </soil>
+</soils>

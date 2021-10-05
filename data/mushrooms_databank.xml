@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mushrooms>
+  <mushroom>
+    <name lang="de">Gelber Knollenblätterpilz</name>
+    <seasonStart>8</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte,Kiefer</trees>
+    <habitat>Wald</habitat>
+    <ph>Sauer</ph>
+    <soil>Sand</soil>
+    <commonness>Häufig</commonness>
+    <poison>Tödlich</poison>
+    <page> 10 </page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Grauer Wulstling</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte,Buche</trees>
+    <habitat>Wald</habitat>
+    <ph>Sauer</ph>
+    <soil>Kalk</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>10</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Perlpilz</name>
+    <seasonStart>6</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>ALL</trees>
+    <habitat>Wald</habitat>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>18</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Fliegenpilz</name>
+    <seasonStart>8</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Birke, Fichte</trees>
+    <habitat>Wald,Wiese</habitat>
+    <ph>ALL</ph>
+    <soil>Sand</soil>
+    <commonness>Häufig</commonness>
+    <poison>Giftig</poison>
+    <page>24</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Riesenschirmling</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>All</trees>
+    <habitat>Waldrand, Wiese</habitat>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>32</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Safranschirmling</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>All</trees>
+    <habitat>Wald</habitat>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>32</page>
+  </mushroom>
+    <mushroom>
+    <name lang="de">Waldchampigon</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte,Buche</trees>
+    <habitat>Wald</habitat>
+    <ph>Sauer</ph>
+    <soil>Kalk</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>64</page>
+  </mushroom>
+   <mushroom>
+    <name lang="de">Anischampigon</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte,Buche</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>ALL</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>68</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Orangeroter Ritterling</name>
+    <seasonStart>8</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>Kalk</soil>
+    <commonness>Selten</commonness>
+    <poison>Ungenießbar</poison>
+    <page>84</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Kahler Krempling</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>All</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>ALL</soil>
+    <commonness>Häufig</commonness>
+    <poison>Giftig</poison>
+    <page>242</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Apfel Täubling</name>
+    <seasonStart>6</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood</woodtype>
+    <trees>Fichte,Kiefer</trees>
+    <habitat>Wald,Moor</habitat>
+    <ph>Sauer</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>440</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Speise Täubling</name>
+    <seasonStart>6</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Eiche,Buche,Kiefer,Fichte</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>442</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Spei Täubling</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Fichte</trees>
+    <habitat>Wald,Moor</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Ungenießbar</poison>
+    <page>458</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Steinpilz</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Kiefer,Fichte,Birke</trees>
+    <habitat>Wald</habitat>
+    <ph>Sauer</ph>
+    <soil>Kalk</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>466</page>
+  </mushroom>
+    <mushroom>
+    <name lang="de">Hexenröhrling</name>
+    <seasonStart>6</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Buche,Eiche,Fichte</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>468</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Gallenröhrling</name>
+    <seasonStart>6</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Kiefer,Fichte</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Ungenießbar</poison>
+    <page>474</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Maronen Röhrling</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Kiefer,Fichte</trees>
+    <habitat>Wald</habitat>
+    <ph>Sauer</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>476</page>
+  </mushroom>
+    <mushroom>
+    <name lang="de">Ziegenlippe</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>All</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>476</page>
+  </mushroom>
+    <mushroom>
+    <name lang="de">Rotfuß Röhrling</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>All</trees>
+    <habitat>Wald,Wiesen</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>478</page>
+  </mushroom>
+    <mushroom>
+    <name lang="de">Pfeffer Röhrling</name>
+    <seasonStart>8</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Kiefer,Fichte</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>486</page>
+  </mushroom>
+    <mushroom>
+    <name lang="de">Gold Röhrling</name>
+    <seasonStart>6</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Lärchen</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>488</page>
+  </mushroom>
+   <mushroom>
+    <name lang="de">Echter Pfifferling</name>
+    <seasonStart>6</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Fichte,Kiefer,Buche</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>556</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Trompeten Pfifferling</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Fichte,Kiefer,Buche</trees>
+    <habitat>Wald</habitat>
+    <ph>Sauer</ph>
+    <soil>Kalk</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>558</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Semmel Stoppelpilz</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>All</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>Kalk</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>564</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Koralle</name>
+    <seasonStart>8</seasonStart>
+    <seaonEnd>10</seaonEnd>
+    <woodtype>Hardwood,Softwood</woodtype>
+    <trees>Fichte,Kiefer,Buche</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Ungenießbar</poison>
+    <page>584</page>
+  </mushroom>
+    <mushroom>
+    <name lang="de">Krause Glucke</name>
+    <seasonStart>8</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Hardwood</woodtype>
+    <trees>Kiefer</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>592</page>
+  </mushroom>
+   <mushroom>
+    <name lang="de">Flaschen Stäubling</name>
+    <seasonStart>7</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Softwood,Hardwood</woodtype>
+    <trees>All</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>594</page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Stinkmorchel</name>
+    <seasonStart>5</seasonStart>
+    <seaonEnd>11</seaonEnd>
+    <woodtype>Softwood,Hardwood</woodtype>
+    <trees>All</trees>
+    <habitat>Wald,Wiese</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Ungenießbar</poison>
+    <page>618</page>
+  </mushroom>
+   <mushroom>
+    <name lang="de">Speißemorchel</name>
+    <seasonStart>3</seasonStart>
+    <seaonEnd>5</seaonEnd>
+    <woodtype>Softwood</woodtype>
+    <trees>All</trees>
+    <habitat>Wald,Wiese</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Essbar</poison>
+    <page>624</page>
+  </mushroom>
+   <mushroom>
+    <name lang="de">Sommertrüffel</name>
+    <seasonStart>8</seasonStart>
+    <seaonEnd>12</seaonEnd>
+    <woodtype>Softwood,Hardwood</woodtype>
+    <trees>Eichen,Buchen</trees>
+    <habitat>Wald</habitat>
+    <ph>All</ph>
+    <soil>Kalk</soil>
+    <commonness>Selten</commonness>
+    <poison>Essbar</poison>
+    <page>662</page>
+  </mushroom>
+</mushrooms>
