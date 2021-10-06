@@ -4,6 +4,10 @@ import constants
 import numpy as np
 import shapefile
 from shapely.geometry import LineString, Point, LinearRing
+import patch
+import environment_utils
+from numba import jit
+
 
 def preprocess(data):
     # Find middle point for all 5 point surfaces
@@ -23,8 +27,10 @@ def preprocess(data):
             print("Exception")
     return new_data
 
+
 p = Proj("EPSG:5683")
 p2 = Proj("EPSG:3034")
+
 
 def translate_epsg_to_utm(coord):
     # Projection function with target coordinate system ESPG 5683 - 3-degree Gauss-Kruger zone 3
@@ -35,23 +41,39 @@ def translate_utm_to_espg(coord):
     # Translate from german coordinate system to gps coordinates
     return p(coord[0], coord[1])
 
+
 def translate_epsg2_to_utm(coord):
     # Projection function with target coordinate system ESPG 5683 - 3-degree Gauss-Kruger zone 3
     point = p2(coord[0], coord[1], inverse=True)
     return [point[1], point[0]]
 
+@jit(nopython=True)
 def get_lat_fac():
     # translate angle distance to km distance latitudial
     return 110.574
 
-
+@jit(nopython=True)
 def get_long_fac(longitude):
     # translate angle distance to km distance longitudinal
-    return 111.32 * math.cos(longitude)
+    return 111.32 * np.cos(longitude)
 
-
+@jit(nopython=True)
 def get_distance(x_1, y_1, x_2, y_2):
-    return math.sqrt(((x_1 - x_2) * get_lat_fac()) ** 2 + ((y_1 - y_2) * get_long_fac(x_1)) ** 2)
+    return np.sqrt(((x_1 - x_2) * get_lat_fac()) ** 2 + ((y_1 - y_2) * get_long_fac(x_1)) ** 2)
+
+@jit(nopython=True)
+def find_closest_station(coord: list, stations: list):
+    best_dist = np.float64(100000.0)
+    best_stat = np.int8(0)
+    for i in range(len(stations)):
+        station = stations[i]
+        dist = np.float64(get_distance(np.float64(station[0]), np.float64(station[1]), coord[0], coord[1]))
+        if dist < np.float64(1.0):
+            return station[2]
+        elif dist < best_dist:
+            best_dist = np.float64(dist)
+            best_stat = station[2]
+    return best_stat
 
 
 def get_german_treename(latname):
@@ -64,61 +86,62 @@ def get_latname_treename(germname):
     return constants.treeNames_g[germname]
 
 
+def create_points_inner(topx, topy, botx, boty, x_add, y_add, dist):
+    cords = []
+    cord = [topx, topy]
+    while cord[1] + y_add < boty:
+        while cord[0] + x_add < botx:
+            cord = [cord[0] + x_add, cord[1]]
+            cords.append(cord)
+        cord = [topx, cord[1] + y_add]
+        cords.append(cord)
+        y_add = dist / get_long_fac(cord[0])
+    return cords
+
+
 def create_points(topx, topy, botx, boty, dist, batch_size_sqrt):
     x_start = min(topx, botx)
     y_start = min(topy, boty)
     x_end = max(topx, botx)
     y_end = max(topy, boty)
 
-    curcord = [x_start, y_start]
+    cord = [x_start, y_start]
 
     x_add = dist / get_lat_fac()
-    y_add = dist / get_long_fac(curcord[0])
+    y_add = dist / get_long_fac(cord[0])
 
-    cords = [curcord]
+    patches = []
 
-    batch_dist_x = (x_end - x_start) / batch_size_sqrt
-    batch_dist_y = (y_end - y_start) / batch_size_sqrt
-    cur_batch_x = x_start
-    cur_batch_y = y_start
-    batches = []
+    stations = environment_utils.get_stations()
+    stations_minimized = []
+    for station in stations:
+        stations_minimized.append([station['geo_lat'], station['geo_lon'], station['station_id']])
+    stations_minimized = np.array(stations_minimized,  dtype=np.float64)
+    while cord[1] + batch_size_sqrt * y_add < y_end:
+        while cord[0] + batch_size_sqrt * x_add < x_end:
+            batch = create_points_inner(cord[0], cord[1], cord[0] +
+                                        batch_size_sqrt * x_add, cord[1]
+                                        + batch_size_sqrt * y_add, x_add, y_add, dist)
 
-    batch_counter_x = 0
-    batch_counter_y = 0
-
-    r =  (x_end-x_start) / x_add
-
-    max_batch_counter_x = int(((x_end-x_start) / x_add) / batch_size_sqrt)
-    max_batch_counter_y = int(((y_end - y_start) / y_add) / batch_size_sqrt)
-
-    while batch_counter_y < max_batch_counter_y:
-        while batch_counter_x < max_batch_counter_x:
-
-            cord = [cur_batch_x - batch_dist_x, cur_batch_y - batch_dist_y]
-            while cord[1] + y_add < cur_batch_y:
-                while cord[0] + x_add < cur_batch_x:
-                    cord = [cord[0] + x_add, cord[1]]
-                    cords.append(cord)
-                cord = [cur_batch_x - batch_dist_x, cord[1] + y_add]
-                cords.append(curcord)
-                y_add = dist / get_long_fac(curcord[0])
-            batches.append(cords)
-            cords = []
-            cur_batch_x += batch_dist_x
-            batch_counter_x += 1
-        cur_batch_y += batch_dist_y
-        batch_counter_y += 1
+            middle = get_middle(cord[0], cord[0] + batch_size_sqrt * x_add, cord[1], cord[1] + batch_size_sqrt * y_add)
+            station_id = find_closest_station(cord, stations_minimized)  # environment_utils.closest_station2(middle)
+            corners = create_corners(cord, batch_size_sqrt * x_add, batch_size_sqrt * y_add)
+            patches.append(patch.Patch(batch, middle, station_id, corners))
+            cord = [cord[0] + batch_size_sqrt * x_add, cord[1]]
+        cord = [x_start, cord[1] + batch_size_sqrt * y_add]
+    print("Created amount of batches: " + str(len(patches)))
+    print("Created amount of points: " + str(len(patches) * (batch_size_sqrt ** 2)))
+    return patches
 
 
-    #while curcord[1] + y_add < y_end:
-    #    while curcord[0] + x_add < x_end:
-    #        curcord = [curcord[0] + x_add, curcord[1]]
-    #        cords.append(curcord)
-    #    curcord = [curcord[0], curcord[1] + y_add]
-    #    cords.append(curcord)
-    #    y_add = dist / get_long_fac(curcord[0])
-    print("Created amount of datapoints: " + str(len(cords)))
-    return batches
+def create_corners(cord, x_delta, y_delta):
+    cords = [cord, [cord[0] + x_delta, cord[1]], [cord[0], cord[1] + y_delta], [cord[0] + x_delta, cord[1] + y_delta]]
+    return cords
+
+
+def get_middle(x_start, x_end, y_start, y_end):
+    return [(x_start + x_end) / 2, (y_start + y_end) / 2]
+
 
 def calc_averages(shape_points):
     res = []
@@ -177,13 +200,7 @@ def find_closest_line_segments(point, lines):
     return best_line, np.min(arr[:, 1])
 
 
-def create_patch(start_coord_x, start_coord_y, end_coord_x, end_coord_y, distance_m):
-
-    return 0
-
-
-def create_patches():
-    return 0
-
-points = create_points(49.95424784938799, 8.681484215611686, 49.781966423998526, 9.029333148681545, 0.1, 2)
-o = 2
+points = create_points(50.000071, 8.541154, 49.578922, 9.441947, 0.1, 10)
+#o = find_closest_station([50.000071, 8.541154], environment_utils.get_stations())
+z = environment_utils.closest_station2([50.000071, 8.541154])
+a = 0

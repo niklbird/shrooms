@@ -1,6 +1,5 @@
 import datetime
 from dwdweather import DwdWeather
-from utils import get_distance
 import csv
 import numpy as np
 import os.path
@@ -8,6 +7,9 @@ import io_utils
 
 dwd = DwdWeather(resolution="daily")
 querried = {};
+
+def get_stations():
+    return dwd.stations()
 
 
 def get_weather_data_cords(coordinates):
@@ -57,16 +59,5 @@ def read_dwd_stations(filename):
         return np.array(stations)
 
 
-def find_closest_station(stations, coord):
-    best_dist = 100000
-    best_stat = 0
-    for i in range(len(stations)):
-        station = stations[i]
-        dist = get_distance(float(station[1]), float(station[2]), coord[0], coord[1])
-        if dist < best_dist:
-            best_dist = dist
-            best_stat = station[0]
-    return best_stat
-
-o = dwd.stations()
-oa = 0
+def closest_station2(coord):
+    return dwd.nearest_station(coord[1], coord[0])

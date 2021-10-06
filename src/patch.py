@@ -1,7 +1,7 @@
 class Patch:
 
-    def __init__(self, points, station, id):
+    def __init__(self, points, middle, station, corners):
         self.points = points
-        self.middle = points[int(len(points) / 2)]
+        self.middle = middle
         self.station = station
-        self.id = id
+        self.corners = corners
