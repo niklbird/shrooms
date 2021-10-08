@@ -7,18 +7,7 @@ class Mushroom:
     def __init__(self, attributes: dict):
         self.attr = attributes
 
-    def tree_value(self, hard_soft_wood, trees: dict):
-        if self.attr['woodtype'][0] * hard_soft_wood[0] + self.attr['woodtype'][1] * hard_soft_wood[1] == 0:
-            return 0
-        if self.attr["trees"][0] == "All":
-            return 0.8
-        val = 0.8
-        # This could be adapted for exclusive trees
-        # Give small benefit to special trees
-        for tree in trees.keys():
-            if tree in self.attr["trees"]:
-                val += 0.2e-3 * trees[tree]
-        return val
+
 
     def soil_value(self, ph, soils):
         ph_val = 1
@@ -51,36 +40,61 @@ class Mushroom:
         return self.attr["seasonStart"] <= cur_month <= self.attr["seasonEnd"]
 
 
+def tree_value(mushroom, trees: dict):
+    p_all = trees['coverage']
+    if p_all == 0:
+        return 0
+    wood_type_factor = (mushroom.attr['woodtype'][0] * trees['hardwood'] +
+                        mushroom.attr['woodtype'][1] * trees['softwood'])
+    if mushroom.attr["trees"][0] == "ALL":
+        return wood_type_factor / p_all
+    val = wood_type_factor / 2
+    # This could be adapted for exclusive trees
+    # Give benefit
+    for tree in trees.keys():
+        if tree in mushroom.attr["trees"]:
+            val += trees[tree]
+    return min(val / p_all, 1)
+
+
 def readXML():
     mushrooms = {}
     root = ET.parse('../data/mushrooms_databank.xml').getroot()
     for type_tag in root.findall('mushroom'):
         shroom = {};
         for child in type_tag:
+            if "Knollen" in child.text:
+                a = 0
             if child.tag == "woodtype":
-                shroom[child.tag] = ("Hardwood" in child.text, "Softwood" in child.text)
-            if child.tag == "trees" or child.tag == "habitat":
-                shroom[child.tag] = child.tag.split(",")
+                shroom[child.tag] = (int("Hardwood" in child.text), int("Softwood" in child.text))
+            elif child.tag == "trees" or child.tag == "habitat":
+                shroom[child.tag] = child.text.lower().split(",")
             else:
                 shroom[child.tag] = child.text
         mushrooms[shroom["name"]] = Mushroom(shroom)
+
     return mushrooms
 
 def humidity_value(humidity, temperature):
-    # Humidity of last 30 days
+    # The factorization of the values can be tweeked, it's just a gross estimation
     # First look at 28 days ago to 14 days ago
     val = 0
+    temp = 0
     for j in range(0, 14):
         # If 10mm is perfect amount, this measures the normalized contribution
         val += 0.5 * min(humidity[j], 25) / 14
+        temp += 0.3 * (temperature[j] / 20) / 14
     # Emphazise 2-1 week ago
     for j in range(14, 21):
         val += 1.5*min(humidity[j], 25) / 7
+        temp += 0.75 * (temperature[j] / 20) / 7
     for j in range(21, 28):
         val += 0.75 * min(humidity[j], 25) / 7
-    # This normalization value should be tweeked
-    norm = 0.3 * (0.5 * 14 + 1.5*7 + 7 * 0.75)
-    return min(val / norm, 3)
+        temp += 2 * (temperature[j] / 20) / 7
+
+    norm_hum = 0.3 * (0.5 * 14 + 1.5*7 + 7 * 0.75)
+    norm_temp = 2.5
+    return min(val / norm_hum, 3), min(temp / norm_temp, 3)
 
 def sanity_test():
     with open('rain.txt.txt', newline='') as csvfile:
@@ -128,4 +142,9 @@ def sanity_test():
         print(str(cnt) + " of " + str(len(hum_res)))
 
 mushrooms = readXML()
+good = [10, 10, 10, 10, 10, 10,10, 10, 10,10, 10, 10, 10, 10, 10, 15, 15, 15, 15, 15, 20, 21, 22, 23, 24, 25, 25, 25]
+bad = good[::-1]
+print(len(good))
+a, e = humidity_value(good, good)
+c, d = humidity_value(bad, bad)
 o = 0

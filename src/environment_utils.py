@@ -2,13 +2,23 @@ import datetime
 from dwdweather import DwdWeather
 import csv
 import numpy as np
+from numpy import genfromtxt
 
 
 dwd = DwdWeather(resolution="daily")
 querried = {};
 
 def get_stations():
-    return dwd.stations()
+    stations = []
+    my_data = genfromtxt("C:/Users/Niklas/Desktop/GIT/shrooms/data/ha_messnetz.csv", delimiter=',')[1:]
+    for data in my_data:
+        dic = {}
+        dic['station_id'] = int(data[0])
+        dic['geo_lat'] = data[9]
+        dic['geo_lon'] = data[10]
+        dic['name'] = data[1]
+        stations.append(dic)
+    return stations
 
 
 def get_weather_data_cords(coordinates):

@@ -6,4 +6,4 @@ class Patch:
         self.station = station
         self.corners = corners
         self.dates = []
-        self.weather_data = []
+        self.weather_data = {}

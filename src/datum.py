@@ -4,3 +4,4 @@ class Datum:
         self.coord = coord
         self.trees = trees
         self.soils = soils
+        self.mushrooms = {}
