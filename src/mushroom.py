@@ -42,19 +42,22 @@ class Mushroom:
 
 def tree_value(mushroom, trees: dict):
     p_all = trees['coverage']
+    com_fac = 1
+    if mushroom.attr['commonness'] == "Selten":
+        com_fac = 0.33
     if p_all == 0:
         return 0
     wood_type_factor = (mushroom.attr['woodtype'][0] * trees['hardwood'] +
                         mushroom.attr['woodtype'][1] * trees['softwood'])
     if mushroom.attr["trees"][0] == "ALL":
-        return wood_type_factor / p_all
+        return wood_type_factor / p_all * com_fac
     val = wood_type_factor / 2
     # This could be adapted for exclusive trees
     # Give benefit
     for tree in trees.keys():
         if tree in mushroom.attr["trees"]:
             val += trees[tree]
-    return min(val / p_all, 1)
+    return min(val / p_all * com_fac, 1)
 
 
 def readXML():
