@@ -2,8 +2,7 @@ import datetime
 from dwdweather import DwdWeather
 import csv
 import numpy as np
-import os.path
-import io_utils
+
 
 dwd = DwdWeather(resolution="daily")
 querried = {};
@@ -28,10 +27,10 @@ def get_weather_data_cords(coordinates):
     return result
 
 
-def get_weather_data_id(station_id):
+def get_weather_data_id(station_id, timestamp):
     # Query DWD for weather data at station id
-    timestamp = datetime.now()
-    timestamp = datetime(timestamp.year, timestamp.month, timestamp.day - 1, 12)
+    #timestamp = datetime.now()
+    #timestamp = datetime(timestamp.year, timestamp.month, timestamp.day - 1, 12)
     result = 0
     if station_id in querried:
         result = querried[station_id]

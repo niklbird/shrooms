@@ -5,3 +5,5 @@ class Patch:
         self.middle = middle
         self.station = station
         self.corners = corners
+        self.dates = []
+        self.weather_data = []

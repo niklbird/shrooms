@@ -134,7 +134,7 @@
     <name lang="de">Apfel Täubling</name>
     <seasonStart>6</seasonStart>
     <seaonEnd>10</seaonEnd>
-    <woodtype>Hardwood</woodtype>
+    <woodtype>Softwood</woodtype>
     <trees>Fichte,Kiefer</trees>
     <habitat>Wald,Moor</habitat>
     <ph>Sauer</ph>
@@ -368,7 +368,7 @@
     <name lang="de">Speißemorchel</name>
     <seasonStart>3</seasonStart>
     <seaonEnd>5</seaonEnd>
-    <woodtype>Softwood</woodtype>
+    <woodtype>Hardwood</woodtype>
     <trees>All</trees>
     <habitat>Wald,Wiese</habitat>
     <ph>All</ph>
