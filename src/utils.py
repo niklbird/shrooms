@@ -332,9 +332,9 @@ def filter_relevant_weather_data(weather_data):
     return ret
 
 
-
 def format_timestamp(timestamp_l):
     return datetime.datetime(timestamp_l.year, timestamp_l.month, timestamp_l.day, 12)
+
 
 def add_weather(patches):
     for patch_l in patches:
@@ -359,7 +359,8 @@ def get_month_factors(month):
     ret = {}
     mushroooms = mushroom.readXML()
     for s_name in mushroooms.keys():
-        ret[s_name] = int(int(mushroooms[s_name].attr['seasonStart']) <= month <= int(mushroooms[s_name].attr['seasonEnd']))
+        ret[s_name] = int(
+            int(mushroooms[s_name].attr['seasonStart']) <= month <= int(mushroooms[s_name].attr['seasonEnd']))
     return ret
 
 
@@ -383,6 +384,7 @@ def calc_dynamic_value(patches):
                 # Basefactor, seasonality, environment factor
                 date.probabilities[shroom] = min(date.mushrooms[shroom] * month_facs[shroom] * dynamic_factor, 1)
 
+
 def calc_static_values(patches):
     mushrooms = mushroom.readXML()
     for patch in patches:
@@ -392,9 +394,12 @@ def calc_static_values(patches):
                 date.mushrooms[shroom.attr['name']] = mushroom.tree_value(shroom, trees)
 
 
-def reparse():
-    # germany_shape = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/ger_points_proc2.dump")[1]
+def reparse(cut_out_germany):
     patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, 0.1, 10)
+    # If some of the points can be outside of Germany -> Only use points inside
+    if(cut_out_germany):
+        germany_shape = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/ger_points_proc.dump")[1]
+        cut_patches(patches, germany_shape)
     trees = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees_points_proc.dump")
     records = create_records("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees")
     mp = middle_points(np.array(trees))
@@ -404,15 +409,3 @@ def reparse():
     io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_shrooms.dump")
     add_weather(patches)
     io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
-
-
-#reparse()
-
-patches = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
-add_weather(patches)
-io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
-calc_dynamic_value(patches)
-# print(lu)
-# o = find_closest_station([50.000071, 8.541154], environment_utils.get_stations())
-z = environment_utils.closest_station2([50.000071, 8.541154])
-a = 0
