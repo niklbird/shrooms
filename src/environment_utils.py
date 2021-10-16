@@ -39,16 +39,11 @@ def get_weather_data_cords(coordinates):
 
 def get_weather_data_id(station_id, timestamp):
     # Query DWD for weather data at station id
-    #timestamp = datetime.now()
-    #timestamp = datetime(timestamp.year, timestamp.month, timestamp.day - 1, 12)
-    result = 0
-    if station_id in querried:
-        result = querried[station_id]
-        print("Using stored result")
+    if str(station_id) + str(timestamp) in querried:
+        result = querried[str(station_id) + str(timestamp)]
     else:
         result = dwd.query(station_id=int(station_id), timestamp=timestamp)
-        querried[station_id] = result
-        print("New query")
+        querried[str(station_id) + str(timestamp)] = result
     return result
 
 

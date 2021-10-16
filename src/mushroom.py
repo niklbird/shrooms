@@ -78,26 +78,40 @@ def readXML():
 
     return mushrooms
 
-def humidity_value(humidity, temperature):
+
+def temp_deviation(temp, opt_val):
+    if temp < opt_val:
+        return temp / opt_val
+    elif temp > opt_val + 5:
+        return opt_val / temp
+    else:
+        return 1.0
+
+def environment_factor(rain, temperature, humidity):
     # The factorization of the values can be tweeked, it's just a gross estimation
     # First look at 28 days ago to 14 days ago
-    val = 0
+    ra = 0
     temp = 0
+    hum = 0
+    optimal_temp = 21
     for j in range(0, 14):
         # If 10mm is perfect amount, this measures the normalized contribution
-        val += 0.5 * min(humidity[j], 25) / 14
-        temp += 0.3 * (temperature[j] / 20) / 14
-    # Emphazise 2-1 week ago
+        ra += 0.5 * min(rain[j], 25) / 14
+        temp += 0.3 * temp_deviation(temperature[j], optimal_temp) / 14
+        hum += humidity[j] / 90 / 14
+    # Emphasize 2-1 week ago
     for j in range(14, 21):
-        val += 1.5*min(humidity[j], 25) / 7
-        temp += 0.75 * (temperature[j] / 20) / 7
+        ra += 3*min(rain[j], 25) / 7
+        temp += 0.75 * temp_deviation(temperature[j], optimal_temp) / 7
+        hum += humidity[j] / 90 / 7
     for j in range(21, 28):
-        val += 0.75 * min(humidity[j], 25) / 7
-        temp += 2 * (temperature[j] / 20) / 7
-
-    norm_hum = 0.3 * (0.5 * 14 + 1.5*7 + 7 * 0.75)
-    norm_temp = 2.5
-    return min(val / norm_hum, 3), min(temp / norm_temp, 3)
+        ra += 0.75 * min(rain[j], 25) / 7
+        temp += 2 * temp_deviation(temperature[j], optimal_temp) / 7
+        hum += humidity[j] / 90 / 7
+    norm_rain = 0.3 * (0.5 * 14 + 3*7 + 7 * 0.75)
+    norm_temp = 3
+    norm_hum = 1.0
+    return min(ra / norm_rain, 3), min(temp / norm_temp, 3), hum / norm_hum
 
 def sanity_test():
     with open('rain.txt.txt', newline='') as csvfile:
@@ -143,11 +157,3 @@ def sanity_test():
                 print(val[i][0])
                 cnt += 1
         print(str(cnt) + " of " + str(len(hum_res)))
-
-mushrooms = readXML()
-good = [10, 10, 10, 10, 10, 10,10, 10, 10,10, 10, 10, 10, 10, 10, 15, 15, 15, 15, 15, 20, 21, 22, 23, 24, 25, 25, 25]
-bad = good[::-1]
-print(len(good))
-a, e = humidity_value(good, good)
-c, d = humidity_value(bad, bad)
-o = 0

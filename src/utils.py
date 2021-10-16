@@ -304,9 +304,9 @@ def fit_trees_to_patch(tree_middlepoints, tree_records, patches, patch_size):
     for patch_l in patches:
         points = np.array(patch_l.points)
         middle = np.array(patch_l.middle)
-        dst = get_distance(np.array(tree_middlepoints[:,0]), np.array(tree_middlepoints[:,1]),
+        dst = get_distance(np.array(tree_middlepoints[:, 0]), np.array(tree_middlepoints[:, 1]),
                            middle[0], middle[1])
-        args = np.argwhere(dst < patch_size*2*1.4)
+        args = np.argwhere(dst < patch_size * 2 * 1.4)
         if len(args) != 0:
             # Only look at patches that contain trees
             trees = tree_middlepoints[args][0]
@@ -319,7 +319,7 @@ def fit_trees_to_patch(tree_middlepoints, tree_records, patches, patch_size):
 
 
 def middle_points(points):
-    return (points[:, 0] + points[:, 1] + points[:, 2] + points[:, 3])/4
+    return (points[:, 0] + points[:, 1] + points[:, 2] + points[:, 3]) / 4
 
 
 def filter_relevant_weather_data(weather_data):
@@ -332,37 +332,56 @@ def filter_relevant_weather_data(weather_data):
     return ret
 
 
+
+def format_timestamp(timestamp_l):
+    return datetime.datetime(timestamp_l.year, timestamp_l.month, timestamp_l.day, 12)
+
 def add_weather(patches):
     for patch_l in patches:
+        patch_l.weather_data = {}
         weather = patch_l.weather_data
         timestamp = datetime.datetime.today()
         # Remove old data
         for weather_ts in weather.keys():
-            if(timestamp - weather_ts).days > 31:
-                del weather[weather_ts]
+            tdiff = (timestamp - weather_ts).days
+            if (weather_ts - timestamp).days > 31:
+                del weather[format_timestamp(weather_ts)]
         for i in range(2, 31):
             # Fill in all missing weather data
-            ts = datetime.datetime.today() - datetime.timedelta(days=i)
+            ts = format_timestamp(datetime.datetime.today() - datetime.timedelta(days=i))
+
             if not ts in weather.keys():
                 weather[ts] = filter_relevant_weather_data(environment_utils.get_weather_data_id(patch_l.station, ts))
         patch_l.weather_data = weather
 
 
-def calc_probabilities(patches):
-    mushrooms = mushroom.readXML()
+def get_month_factors(month):
+    ret = {}
+    mushroooms = mushroom.readXML()
+    for s_name in mushroooms.keys():
+        ret[s_name] = int(int(mushroooms[s_name].attr['seasonStart']) <= month <= int(mushroooms[s_name].attr['seasonEnd']))
+    return ret
+
+
+def calc_dynamic_value(patches):
+    month_facs = get_month_factors(datetime.datetime.today().month)
     for patch in patches:
         weather = patch.weather_data
-        if weather == None:
-            continue
-
         temperatures = []
         rains = []
+        humidities = []
         for i in range(30, 1, -1):
-            ts = datetime.datetime.today() - datetime.timedelta(days=i)
+            ts = format_timestamp(datetime.datetime.today() - datetime.timedelta(days=i))
             temperatures.append(weather[ts]['temperature'])
             rains.append(weather[ts]['rain'])
+            humidities.append(weather[ts]['humidity'])
+        rain_val, temp_val, hum_val = mushroom.environment_factor(rains, temperatures, humidities)
+        # Factors may have to be tweeked
+        dynamic_factor = (2 * rain_val + 1 * temp_val + 0.7 * hum_val) / 3.7
         for date in patch.dates:
-            return
+            for shroom in date.mushrooms.keys():
+                # Basefactor, seasonality, environment factor
+                date.probabilities[shroom] = min(date.mushrooms[shroom] * month_facs[shroom] * dynamic_factor, 1)
 
 def calc_static_values(patches):
     mushrooms = mushroom.readXML()
@@ -374,82 +393,25 @@ def calc_static_values(patches):
 
 
 def reparse():
+    # germany_shape = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/ger_points_proc2.dump")[1]
     patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, 0.1, 10)
     trees = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees_points_proc.dump")
     records = create_records("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees")
     mp = middle_points(np.array(trees))
     fit_trees_to_patch(np.array(mp), records, np.array(patches), 1)
     io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_proc.dump")
-    add_weather(patches)
-    io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
     calc_static_values(patches)
     io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_shrooms.dump")
+    add_weather(patches)
+    io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
 
-
-#ret, rec, lu = parse_in_shape("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees", "EPSG:5683")
-# io_utils.dump_to_file(points, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches.dump")
-# ret2, rec2, lu2 = parse_in_shape("C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/vg2500_sta", "EPSG:4326")
-# io_utils.dump_to_file(ret2, "C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/ger_points_proc2.dump")
-
-# germany_shape = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/ger_points_proc2.dump")[1]
-
-
-# trees = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees_points_proc.dump")
-# records = create_records("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees")
-# rec = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees_records_proc.dump")
-# lu = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees_lookup_proc.dump")
-
-# mp = middle_points(np.array(trees))
-
-# fit_trees_to_patch(np.array(mp), records, np.array(patches), 1)
-
-# io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_proc.dump")
-
-# print("Start parsing shape")
-# soils = parse_in_shape("C:/Users/Niklas/Desktop/GIT/shrooms/data/soil_folder/buek1000de_v21", "EPSG:3034")
-# print("End parsing shape")
-
-# add_weather(patches)
-# io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
-
-
-#wd = environment_utils.get_weather_data_id(1420, timestamp2)
-#lsaf = (timestamp2 - timestamp).days
-
-
-#patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, 0.1, 10)
-# ret, rec, lu = parse_in_shape("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees", "EPSG:5683")
-#io_utils.dump_to_file(points, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches.dump")
-# ret2, rec2, lu2 = parse_in_shape("C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/vg2500_sta", "EPSG:4326")
-# io_utils.dump_to_file(ret2, "C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/ger_points_proc2.dump")
-
-#germany_shape = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/ger_points_proc2.dump")[1]
-
-# patches = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_proc.dump")
-
-#trees = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees_points_proc.dump")
-#records = create_records("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees")
-# rec = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees_records_proc.dump")
-# lu = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees_lookup_proc.dump")
-
-#mp = middle_points(np.array(trees))
-
-#fit_trees_to_patch(np.array(mp), records, np.array(patches), 1)
-
-#io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_proc.dump")
-
-#print("Start parsing shape")
-#soils = parse_in_shape("C:/Users/Niklas/Desktop/GIT/shrooms/data/soil_folder/buek1000de_v21", "EPSG:3034")
-#print("End parsing shape")
-
-#add_weather(patches)
-#io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
 
 #reparse()
 
 patches = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
-calc_static_values(patches)
-io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_shrooms.dump")
+add_weather(patches)
+io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
+calc_dynamic_value(patches)
 # print(lu)
 # o = find_closest_station([50.000071, 8.541154], environment_utils.get_stations())
 z = environment_utils.closest_station2([50.000071, 8.541154])

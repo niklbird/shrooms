@@ -5,3 +5,4 @@ class Datum:
         self.trees = trees
         self.soils = soils
         self.mushrooms = {}
+        self.probabilities = {}
