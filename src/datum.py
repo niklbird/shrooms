@@ -1,3 +1,4 @@
+# This represents one datapoint
 class Datum:
 
     def __init__(self, coord, trees, soils):

@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 
+# TODO
 class Soil:
     def __init__(self, attributes: dict):
         self.attr = attributes
@@ -20,5 +21,3 @@ def readXML():
         soils[soil["name"]] = Soil(soil)
     return soils
 
-soils = readXML()
-o = 0

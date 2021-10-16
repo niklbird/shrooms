@@ -3,20 +3,18 @@ from dwdweather import DwdWeather
 import csv
 import numpy as np
 from numpy import genfromtxt
-
+import constants
 
 dwd = DwdWeather(resolution="daily")
 querried = {};
 
+
 def get_stations():
+    # Read in DWD stations
     stations = []
-    my_data = genfromtxt("C:/Users/Niklas/Desktop/GIT/shrooms/data/ha_messnetz.csv", delimiter=',')[1:]
+    my_data = genfromtxt(constants.pwd + "/data/ha_messnetz.csv", delimiter=',')[1:]
     for data in my_data:
-        dic = {}
-        dic['station_id'] = int(data[0])
-        dic['geo_lat'] = data[9]
-        dic['geo_lon'] = data[10]
-        dic['name'] = data[1]
+        dic = {'station_id': int(data[0]), 'geo_lat': data[9], 'geo_lon': data[10], 'name': data[1]}
         stations.append(dic)
     return stations
 
@@ -62,6 +60,3 @@ def read_dwd_stations(filename):
         stations = np.array(stations)
         return np.array(stations)
 
-
-def closest_station2(coord):
-    return dwd.nearest_station(coord[1], coord[0])

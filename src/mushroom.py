@@ -2,14 +2,15 @@ import xml.etree.ElementTree as ET
 import csv
 import matplotlib.pyplot as plt
 
+
+# Class that represents one mushroom-type object
 class Mushroom:
 
     def __init__(self, attributes: dict):
         self.attr = attributes
 
-
-
     def soil_value(self, ph, soils):
+        # Currently unused
         ph_val = 1
         if self.attr["ph"] != "All":
             ph_val = int(self.attr["ph"] == ph)
@@ -21,20 +22,6 @@ class Mushroom:
                     soil_val = 1
                     break
         return ph_val * soil_val
-
-    def humidity_value(self, humidity, temperature):
-        # Humidity of last 30 days
-        # First look at 28 days ago to 14 days ago
-        val = 0
-        for i in range(0, 14):
-            # If 10mm is perfect amount, this measures the normalized contribution
-            val += 0.5 * max(humidity[i], 25) / (10 * 14)
-        for i in range(14, 21):
-            val += max(humidity[i], 25) / (10 * 7)
-        for i in range(21, 28):
-            val += 0.75 * max(humidity[i], 25) / (10 * 7)
-        norm = 0.5 * 14 + 7 + 7 * 0.75
-        return 0
 
     def time_value(self, cur_month):
         return self.attr["seasonStart"] <= cur_month <= self.attr["seasonEnd"]
@@ -60,9 +47,9 @@ def tree_value(mushroom, trees: dict):
     return min(val / p_all * com_fac, 1)
 
 
-def readXML():
+def read_XML(url):
     mushrooms = {}
-    root = ET.parse('../data/mushrooms_databank.xml').getroot()
+    root = ET.parse(url).getroot()
     for type_tag in root.findall('mushroom'):
         shroom = {};
         for child in type_tag:
@@ -87,6 +74,7 @@ def temp_deviation(temp, opt_val):
     else:
         return 1.0
 
+
 def environment_factor(rain, temperature, humidity):
     # The factorization of the values can be tweeked, it's just a gross estimation
     # First look at 28 days ago to 14 days ago
@@ -101,19 +89,21 @@ def environment_factor(rain, temperature, humidity):
         hum += humidity[j] / 90 / 14
     # Emphasize 2-1 week ago
     for j in range(14, 21):
-        ra += 3*min(rain[j], 25) / 7
+        ra += 3 * min(rain[j], 25) / 7
         temp += 0.75 * temp_deviation(temperature[j], optimal_temp) / 7
         hum += humidity[j] / 90 / 7
     for j in range(21, 28):
         ra += 0.75 * min(rain[j], 25) / 7
         temp += 2 * temp_deviation(temperature[j], optimal_temp) / 7
         hum += humidity[j] / 90 / 7
-    norm_rain = 0.3 * (0.5 * 14 + 3*7 + 7 * 0.75)
+    norm_rain = 0.3 * (0.5 * 14 + 3 * 7 + 7 * 0.75)
     norm_temp = 3
     norm_hum = 1.0
     return min(ra / norm_rain, 3), min(temp / norm_temp, 3), hum / norm_hum
 
+
 def sanity_test():
+    # Deprecated, currently unused
     with open('rain.txt.txt', newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=';', quotechar='|')
         rowcounter = 0
@@ -134,8 +124,8 @@ def sanity_test():
                 rowcounter = 0
                 ns = 0
         hum_res = []
-        for i in range(40, len(val2)):
-            hum_res.append(humidity_value(val2[i - 30:i], 0))
+        #for i in range(40, len(val2)):
+            # hum_res.append(humidity_value(val2[i - 30:i], 0))
         curMonth = '10'
         res = []
         i = 0

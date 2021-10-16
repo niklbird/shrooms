@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 treeNames_l = {"pAbies": "Tanne", "pAcer": "Ahorn",
                "pAll": "Gesamt", "pAlnus": "Erle", "pBetula": "Birke", "pCarpinus": "Hainbuche",
                "pCastanea": "Kastanie",
@@ -25,3 +28,6 @@ treeNames_g = {"Tanne": "pAbies", "Ahorn": "pAcer", "Gesamt": "pAll", "Erle": "p
                "Kiefer": "pPinus",
                "Pappel": "pPopulus", "Kirsche": "pPrunus", "Birne": "pPyrus", "Eiche": "pQuerus", "Robinie": "pRobinia",
                "Weiden": "pSalix", "Vogelbeere": "pSorbus", "Linde": "pTilia", "Ulme": "pUlmus", "poHaupt": "poHaupt"}
+
+cwd = os.getcwd()
+pwd = str(Path(cwd).parent.absolute())

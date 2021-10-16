@@ -1,25 +1,19 @@
-from pyproj import Proj
-import math
 import constants
 import numpy as np
 import shapefile
-from shapely.geometry import LineString, Point, LinearRing
 import patch
 import environment_utils
 from numba import jit
 from dbfread import DBF
 from pyproj import Proj
 import io_utils
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
-import matplotlib.path as mpltPath
 from mpl_toolkits.basemap import Basemap
-import mpl_toolkits.basemap
 import matplotlib.pyplot as plt
-from time import time
 import datum
 import datetime
 import mushroom
+
+# All common utility functions
 
 p = Proj("EPSG:5683")
 p2 = Proj("EPSG:3034")
@@ -356,7 +350,7 @@ def add_weather(patches):
 def get_month_factors(month):
     # Factor that indicates if mushroom is in season
     ret = {}
-    mushroooms = mushroom.readXML()
+    mushroooms = mushroom.read_XML('../data/mushrooms_databank.xml')
     for s_name in mushroooms.keys():
         ret[s_name] = int(
             int(mushroooms[s_name].attr['seasonStart']) <= month <= int(mushroooms[s_name].attr['seasonEnd']))
@@ -386,7 +380,7 @@ def calc_dynamic_value(patches):
 
 
 def calc_static_values(patches):
-    mushrooms = mushroom.readXML()
+    mushrooms = mushroom.read_XML('../data/mushrooms_databank.xml')
     for patch in patches:
         for date in patch.dates:
             trees = date.trees
@@ -398,14 +392,14 @@ def reparse(cut_out_germany):
     patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, 0.1, 10)
     # If some of the points can be outside of Germany -> Only use points inside
     if cut_out_germany:
-        germany_shape = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/ger_folder/ger_points_proc.dump")[1]
+        germany_shape = io_utils.read_dump_from_file(constants.pwd + "/data/ger_folder/ger_points_proc.dump")[1]
         cut_patches(patches, germany_shape)
-    trees = io_utils.read_dump_from_file("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees_points_proc.dump")
-    records = create_records("C:/Users/Niklas/Desktop/GIT/shrooms/data/trees_folder/trees")
+    trees = io_utils.read_dump_from_file(constants.pwd + "/data/trees_folder/trees_points_proc.dump")
+    records = create_records(constants.pwd + "/data/trees_folder/trees")
     mp = middle_points(np.array(trees))
     fit_trees_to_patch(np.array(mp), records, np.array(patches), 1)
-    io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_proc.dump")
+    io_utils.dump_to_file(patches, constants.pwd + "/data/patches_proc.dump")
     calc_static_values(patches)
-    io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_shrooms.dump")
+    io_utils.dump_to_file(patches, constants.pwd + "/data/patches_shrooms.dump")
     add_weather(patches)
-    io_utils.dump_to_file(patches, "C:/Users/Niklas/Desktop/GIT/shrooms/data/patches_weather.dump")
+    io_utils.dump_to_file(patches, constants.pwd + "/data/patches_weather.dump")
