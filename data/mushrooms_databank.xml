@@ -3,7 +3,7 @@
   <mushroom>
     <name lang="de">Gelber Knollenblätterpilz</name>
     <seasonStart>8</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>Fichte,Kiefer</trees>
     <habitat>Wald</habitat>
@@ -16,7 +16,7 @@
   <mushroom>
     <name lang="de">Grauer Wulstling</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>Fichte,Buche</trees>
     <habitat>Wald</habitat>
@@ -29,7 +29,7 @@
   <mushroom>
     <name lang="de">Perlpilz</name>
     <seasonStart>6</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>ALL</trees>
     <habitat>Wald</habitat>
@@ -42,7 +42,7 @@
   <mushroom>
     <name lang="de">Fliegenpilz</name>
     <seasonStart>8</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>Birke, Fichte</trees>
     <habitat>Wald,Wiese</habitat>
@@ -55,7 +55,7 @@
   <mushroom>
     <name lang="de">Riesenschirmling</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>All</trees>
     <habitat>Waldrand, Wiese</habitat>
@@ -68,7 +68,7 @@
   <mushroom>
     <name lang="de">Safranschirmling</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>All</trees>
     <habitat>Wald</habitat>
@@ -81,7 +81,7 @@
     <mushroom>
     <name lang="de">Waldchampigon</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>Fichte,Buche</trees>
     <habitat>Wald</habitat>
@@ -94,7 +94,7 @@
    <mushroom>
     <name lang="de">Anischampigon</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>Fichte,Buche</trees>
     <habitat>Wald</habitat>
@@ -107,7 +107,7 @@
   <mushroom>
     <name lang="de">Orangeroter Ritterling</name>
     <seasonStart>8</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>Fichte</trees>
     <habitat>Wald</habitat>
@@ -120,7 +120,7 @@
   <mushroom>
     <name lang="de">Kahler Krempling</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>All</trees>
     <habitat>Wald</habitat>
@@ -133,7 +133,7 @@
   <mushroom>
     <name lang="de">Apfel Täubling</name>
     <seasonStart>6</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Softwood</woodtype>
     <trees>Fichte,Kiefer</trees>
     <habitat>Wald,Moor</habitat>
@@ -146,7 +146,7 @@
   <mushroom>
     <name lang="de">Speise Täubling</name>
     <seasonStart>6</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Eiche,Buche,Kiefer,Fichte</trees>
     <habitat>Wald</habitat>
@@ -159,7 +159,7 @@
   <mushroom>
     <name lang="de">Spei Täubling</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Fichte</trees>
     <habitat>Wald,Moor</habitat>
@@ -172,7 +172,7 @@
   <mushroom>
     <name lang="de">Steinpilz</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Kiefer,Fichte,Birke</trees>
     <habitat>Wald</habitat>
@@ -185,7 +185,7 @@
     <mushroom>
     <name lang="de">Hexenröhrling</name>
     <seasonStart>6</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Buche,Eiche,Fichte</trees>
     <habitat>Wald</habitat>
@@ -198,7 +198,7 @@
   <mushroom>
     <name lang="de">Gallenröhrling</name>
     <seasonStart>6</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Kiefer,Fichte</trees>
     <habitat>Wald</habitat>
@@ -211,7 +211,7 @@
   <mushroom>
     <name lang="de">Maronen Röhrling</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Kiefer,Fichte</trees>
     <habitat>Wald</habitat>
@@ -224,7 +224,7 @@
     <mushroom>
     <name lang="de">Ziegenlippe</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>All</trees>
     <habitat>Wald</habitat>
@@ -237,7 +237,7 @@
     <mushroom>
     <name lang="de">Rotfuß Röhrling</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>All</trees>
     <habitat>Wald,Wiesen</habitat>
@@ -250,7 +250,7 @@
     <mushroom>
     <name lang="de">Pfeffer Röhrling</name>
     <seasonStart>8</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Kiefer,Fichte</trees>
     <habitat>Wald</habitat>
@@ -263,7 +263,7 @@
     <mushroom>
     <name lang="de">Gold Röhrling</name>
     <seasonStart>6</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Lärchen</trees>
     <habitat>Wald</habitat>
@@ -276,7 +276,7 @@
    <mushroom>
     <name lang="de">Echter Pfifferling</name>
     <seasonStart>6</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Fichte,Kiefer,Buche</trees>
     <habitat>Wald</habitat>
@@ -289,7 +289,7 @@
   <mushroom>
     <name lang="de">Trompeten Pfifferling</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Fichte,Kiefer,Buche</trees>
     <habitat>Wald</habitat>
@@ -302,7 +302,7 @@
   <mushroom>
     <name lang="de">Semmel Stoppelpilz</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>All</trees>
     <habitat>Wald</habitat>
@@ -315,7 +315,7 @@
   <mushroom>
     <name lang="de">Koralle</name>
     <seasonStart>8</seasonStart>
-    <seaonEnd>10</seaonEnd>
+    <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Fichte,Kiefer,Buche</trees>
     <habitat>Wald</habitat>
@@ -328,7 +328,7 @@
     <mushroom>
     <name lang="de">Krause Glucke</name>
     <seasonStart>8</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood</woodtype>
     <trees>Kiefer</trees>
     <habitat>Wald</habitat>
@@ -341,7 +341,7 @@
    <mushroom>
     <name lang="de">Flaschen Stäubling</name>
     <seasonStart>7</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Softwood,Hardwood</woodtype>
     <trees>All</trees>
     <habitat>Wald</habitat>
@@ -354,7 +354,7 @@
   <mushroom>
     <name lang="de">Stinkmorchel</name>
     <seasonStart>5</seasonStart>
-    <seaonEnd>11</seaonEnd>
+    <seasonEnd>11</seasonEnd>
     <woodtype>Softwood,Hardwood</woodtype>
     <trees>All</trees>
     <habitat>Wald,Wiese</habitat>
@@ -367,7 +367,7 @@
    <mushroom>
     <name lang="de">Speißemorchel</name>
     <seasonStart>3</seasonStart>
-    <seaonEnd>5</seaonEnd>
+    <seasonEnd>5</seasonEnd>
     <woodtype>Hardwood</woodtype>
     <trees>All</trees>
     <habitat>Wald,Wiese</habitat>
@@ -380,7 +380,7 @@
    <mushroom>
     <name lang="de">Sommertrüffel</name>
     <seasonStart>8</seasonStart>
-    <seaonEnd>12</seaonEnd>
+    <seasonEnd>12</seasonEnd>
     <woodtype>Softwood,Hardwood</woodtype>
     <trees>Eichen,Buchen</trees>
     <habitat>Wald</habitat>
