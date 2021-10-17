@@ -14,6 +14,7 @@ def main():
     utils.calc_dynamic_value(patches)
     # Dump final result to a file for usage in JS?
     io_utils.dump_to_file(patches, constants.pwd + "/data/patches_probabilities.dump")
+    io_utils.write_to_GEOJSON(patches)
 
 
 if __name__ == "__main__":
