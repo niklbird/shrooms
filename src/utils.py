@@ -233,6 +233,8 @@ def create_records(shape_folder):
 def parse_in_shape(shape_folder, projection):
     # Parse in a shape file
     sf = shapefile.Reader(shape_folder, encoding="iso-8859-1")
+    if projection == "EPSG:4326":
+        return sf.shapes(), sf.records(), create_lookup(shape_folder)
     return project_shapes(sf.shapes(), projection), sf.records(), create_lookup(shape_folder)
 
 
@@ -390,7 +392,7 @@ def calc_static_values(patches):
 
 
 def reparse(cut_out_germany):
-    patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, 0.1, 10)
+    patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, constants.point_dist, 10)
     # If some of the points can be outside of Germany -> Only use points inside
     if cut_out_germany:
         germany_shape = io_utils.read_dump_from_file(constants.pwd + "/data/ger_folder/ger_points_proc.dump")[1]
@@ -404,3 +406,131 @@ def reparse(cut_out_germany):
     io_utils.dump_to_file(patches, constants.pwd + "/data/patches_shrooms.dump")
     add_weather(patches)
     io_utils.dump_to_file(patches, constants.pwd + "/data/patches_weather.dump")
+
+def find_max_size_shape(shape):
+    # Approximate distance between the two most distant points in shape
+    middle_point = [np.average(shape[:,0]), np.average(shape[:,1])] # This is only an approximation, but will always over-estimate distance in the end
+    dist_arr = np.array(np.abs(get_distance_arr(shape[:,0], shape[:,1], middle_point[0], middle_point[1])))
+    return 2*np.max(dist_arr)
+
+def find_max_size_shapes(shapes):
+    dist_arr = []
+    for i in range(len(shapes)):
+        dist_arr.append(find_max_size_shape(shapes[i]))
+    return dist_arr
+
+
+def fit_trees_to_point(tree_shapes_points, point):
+    for j in range(int(len(tree_shapes_points))):
+        if shape_contains_point(tree_shapes_points[j], point):
+            return j
+
+
+def fit_trees_to_points(tree_shapes_points, points):
+    ret = []
+    tree_shapes_points = np.array(tree_shapes_points)
+    for i in range(len(points)):
+        ret.append(fit_trees_to_point(tree_shapes_points, points[i]))
+    return ret
+
+
+def fit_trees_to_patches2(patches, tree_shapes_points, tree_shape_distances, tree_records):
+    print("Started fitting")
+    half_patch_length = constants.points_per_patch_sqrt*constants.point_dist / 2
+    for i in range(len(patches)):
+        patch = patches[i]
+        middle = patch.middle
+        distances = []
+        for j in range(len(tree_shapes_points)):
+            tree_shape = np.array(tree_shapes_points[j])
+            # Approximate distance
+            distances.append(abs(get_distance(np.array(tree_shape[0][0]), np.array(tree_shape[0][1]), middle[0], middle[1])) - tree_shape_distances[j])
+        distances = np.array(distances)
+        possible_trees = np.where(distances < half_patch_length) # Indices of tree shapes that are possible in patch j
+        tree_shapes_points = np.array(tree_shapes_points)
+        ls = tree_shapes_points[possible_trees]
+        possible_records = np.array(tree_records)[possible_trees][:,3]
+        fitting_shapes = fit_trees_to_points(ls, patch.points)
+        for j in range(len(patch.points)):
+            # Only iterate possible trees -> Select from possible records the one with the returned index
+            trees = possible_records[fitting_shapes[j]]
+            patch.dates.append(datum.Datum(patch.points[j], trees, 0))
+        if i == 100:
+            return patches
+
+def fit_trees_to_patches3(patches, tree_shapes_points, tree_shape_distances, tree_records, tree_patches, tree_preprocessed):
+    tree_shapes_points_np = np.array(tree_shapes_points)
+    tree_records_np = np.array(tree_records)
+    for i in range(len(patches)):
+        patch = patches[i]
+        middle = patch.middle
+        # First sorting -> Find fitting pre-sorted tree shapes
+        indeces = find_4_closest_points(tree_patches, middle)
+        possible_shape_indeces = []
+        for index in indeces:
+            possible_shape_indeces = possible_shape_indeces + tree_preprocessed[index]
+        possible_shapes = tree_shapes_points_np[possible_shape_indeces]
+        possible_records = tree_records_np[possible_shape_indeces][:, 3]
+        fitting_shapes = fit_trees_to_points(possible_shapes, patch.points)
+        for j in range(len(patch.points)):
+            # Only iterate possible trees -> Select from possible records the one with the returned index
+            trees = possible_records[fitting_shapes[j]]
+            patch.dates.append(datum.Datum(patch.points[j], trees, 0))
+        if i == 100:
+            return patches
+
+
+def preprocess_trees(points, tree_shapes, tree_shape_distances, dist):
+    ret = [[] for j in range(len(points))]
+    dist_half = dist / 2
+    points = np.array(points)
+    for i in range(len(tree_shapes)):
+        shape = tree_shapes[i]
+        indices = np.where((get_distance_arr(points[:,0], points[:, 1], shape[0][0], shape[0][1]) - tree_shape_distances[i]) < dist_half)[0]
+        for index in indices:
+            ret[index].append(i)
+    return ret
+
+
+
+def find_4_closest_points(points, point):
+    points = np.array(points)
+    distances = get_distance_arr(points[:,0], points[:,1], point[0], point[1])
+    A = np.partition(distances, 3)[0:4]
+    indeces = []
+    for i in range(len(A)):
+        indeces.append(np.where(distances == A[i])[0][0])
+    return indeces
+
+
+#tree_shapes, records, x = parse_in_shape(constants.pwd + "/data/tree_folder2/teessst", "EPSG:4326")
+#for i in range(len(tree_shapes)):
+#    my_array = np.array(tree_shapes[i].points)
+#    temp = np.copy(my_array[:, 0])
+#    my_array[:, 0] = my_array[:, 1]
+#    my_array[:, 1] = temp
+#    tree_shapes[i] = my_array
+records = create_records(constants.pwd + "/data/tree_folder2/CORINE2012")
+for i in range(len(records)):
+    record = records[i]
+    text = record[3]
+    record[3] = str(text).replace("Ã¤", "ä").replace("Ã¶", "Ö").replace("Ã¼", "ü").replace("Ã", "Ü").replace("Ã", "ß")
+    records[i] = record
+tree_shapes = io_utils.read_dump_from_file("trees_tmp.dump")
+#patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, constants.point_dist, constants.points_per_patch_sqrt)
+tree_patches = create_points_inner(49.0, 8.0, 51.0, 10.0, 1.0 / get_lat_fac(), 1.0 / get_long_fac(51.0), 1.0)
+#io_utils.dump_to_file(patches, "pat_tmp.dump")
+patches = io_utils.read_dump_from_file("pat_tmp.dump")
+print("Finding max size shapes")
+#tree_shape_distances = find_max_size_shapes(tree_shapes)
+print("Preprocessing trees")
+fgdas = "mä"
+#io_utils.dump_to_file(tree_shape_distances, "tree_shape_dist_tmp.dump")
+tree_shape_distances = io_utils.read_dump_from_file("tree_shape_dist_tmp.dump")
+#prepro = preprocess_trees(tree_patches, tree_shapes, tree_shape_distances, 1)
+#io_utils.dump_to_file(prepro, "prepro_tmp.dump")
+prepro = io_utils.read_dump_from_file("prepro_tmp.dump")
+#find_4_closest_points(tree_patches, [50.0, 9.0])
+print("Fitting tree to patches")
+patches = fit_trees_to_patches3(patches, tree_shapes, tree_shape_distances, records, tree_patches, prepro)
+o = 0

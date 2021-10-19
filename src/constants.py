@@ -29,5 +29,8 @@ treeNames_g = {"Tanne": "pAbies", "Ahorn": "pAcer", "Gesamt": "pAll", "Erle": "p
                "Pappel": "pPopulus", "Kirsche": "pPrunus", "Birne": "pPyrus", "Eiche": "pQuerus", "Robinie": "pRobinia",
                "Weiden": "pSalix", "Vogelbeere": "pSorbus", "Linde": "pTilia", "Ulme": "pUlmus", "poHaupt": "poHaupt"}
 
+point_dist = 0.1
+points_per_patch_sqrt = 10
+
 cwd = os.getcwd()
 pwd = str(Path(cwd).parent.absolute())
