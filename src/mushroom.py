@@ -47,6 +47,21 @@ def tree_value(mushroom, trees: dict):
     return min(val / p_all * com_fac, 1)
 
 
+def tree_value_new(mushroom, trees: str):
+    com_fac = 1
+    if mushroom.attr['commonness'] == "Selten":
+        com_fac = 0.33
+    hardwood = 0
+    if trees == "Mischwälder" or trees == "Laubwälder":
+        hardwood = 1
+    softwood = 0
+    if trees == "Mischwälder" or trees == "Nadelwälder":
+        softwood = 1
+    wt = mushroom.attr['woodtype']
+    wood_type_factor = (wt[0] * hardwood + wt[1] * softwood)
+    # In the future, this could also consider specific trees
+    return wood_type_factor * com_fac
+
 def read_XML(url):
     mushrooms = {}
     root = ET.parse(url).getroot()

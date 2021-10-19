@@ -384,12 +384,13 @@ def calc_dynamic_value(patches):
 
 def calc_static_values(patches):
     mushrooms = mushroom.read_XML('../data/mushrooms_databank.xml')
+    counter = 0
     for patch in patches:
+        counter += 1
         for date in patch.dates:
             trees = date.trees
             for shroom in mushrooms.values():
-                date.mushrooms[shroom.attr['name']] = mushroom.tree_value(shroom, trees)
-
+                date.mushrooms[shroom.attr['name']] = mushroom.tree_value_new(shroom, trees)
 
 def reparse(cut_out_germany):
     patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, constants.point_dist, 10)
@@ -435,9 +436,11 @@ def fit_trees_to_points(tree_shapes_points, points):
 
 
 def fit_trees_to_patches2(patches, tree_shapes_points, tree_shape_distances, tree_records):
-    print("Started fitting")
+
     half_patch_length = constants.points_per_patch_sqrt*constants.point_dist / 2
     for i in range(len(patches)):
+        if i % 200 == 0:
+            print("Progress: " + str(i))
         patch = patches[i]
         middle = patch.middle
         distances = []
@@ -454,14 +457,16 @@ def fit_trees_to_patches2(patches, tree_shapes_points, tree_shape_distances, tre
         for j in range(len(patch.points)):
             # Only iterate possible trees -> Select from possible records the one with the returned index
             trees = possible_records[fitting_shapes[j]]
+            print(trees.shape)
             patch.dates.append(datum.Datum(patch.points[j], trees, 0))
-        if i == 100:
-            return patches
 
 def fit_trees_to_patches3(patches, tree_shapes_points, tree_shape_distances, tree_records, tree_patches, tree_preprocessed):
+    print("Started fitting with amount: " + str(len(patches)))
     tree_shapes_points_np = np.array(tree_shapes_points)
     tree_records_np = np.array(tree_records)
     for i in range(len(patches)):
+        if i % 200 == 0:
+            print("Progress: " + str(i))
         patch = patches[i]
         middle = patch.middle
         # First sorting -> Find fitting pre-sorted tree shapes
@@ -474,10 +479,12 @@ def fit_trees_to_patches3(patches, tree_shapes_points, tree_shape_distances, tre
         fitting_shapes = fit_trees_to_points(possible_shapes, patch.points)
         for j in range(len(patch.points)):
             # Only iterate possible trees -> Select from possible records the one with the returned index
+            if fitting_shapes[j] == None:
+                patch.dates.append(datum.Datum(patch.points[j], "", 0))
+                continue
             trees = possible_records[fitting_shapes[j]]
             patch.dates.append(datum.Datum(patch.points[j], trees, 0))
-        if i == 100:
-            return patches
+    return patches
 
 
 def preprocess_trees(points, tree_shapes, tree_shape_distances, dist):
@@ -503,6 +510,38 @@ def find_4_closest_points(points, point):
     return indeces
 
 
+def reparse2():
+    records = create_records(constants.pwd + "/data/tree_folder2/CORINE2012")
+
+    unique_names = []
+
+    for i in range(len(records)):
+        record = records[i]
+        text = record[3]
+        record[3] = str(text).replace("Ã¤", "ä").replace("Ã¶", "Ö").replace("Ã¼", "ü").replace("Ã", "Ü").replace("Ã",
+                                                                                                                  "ß")
+        if record[3] not in unique_names:
+            unique_names.append(record[3])
+        records[i] = record
+    tree_shapes = io_utils.read_dump_from_file("trees_tmp.dump")
+    # patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, constants.point_dist, constants.points_per_patch_sqrt)
+    tree_patches = create_points_inner(49.0, 8.0, 51.0, 10.0, 1.0 / get_lat_fac(), 1.0 / get_long_fac(51.0), 1.0)
+    # io_utils.dump_to_file(patches, "pat_tmp.dump")
+    patches = io_utils.read_dump_from_file("pat_tmp.dump")
+    print("Finding max size shapes")
+    # tree_shape_distances = find_max_size_shapes(tree_shapes)
+    print("Preprocessing trees")
+    # io_utils.dump_to_file(tree_shape_distances, "tree_shape_dist_tmp.dump")
+    tree_shape_distances = io_utils.read_dump_from_file("tree_shape_dist_tmp.dump")
+    # prepro = preprocess_trees(tree_patches, tree_shapes, tree_shape_distances, 1)
+    # io_utils.dump_to_file(prepro, "prepro_tmp.dump")
+    prepro = io_utils.read_dump_from_file("prepro_tmp.dump")
+
+    print("Fitting tree to patches")
+    patches = fit_trees_to_patches3(patches, tree_shapes, tree_shape_distances, records, tree_patches, prepro)
+    calc_static_values(patches)
+    fos = 0
+    io_utils.dump_to_file(patches, constants.pwd + "/data/patches_weather2.dump")
 #tree_shapes, records, x = parse_in_shape(constants.pwd + "/data/tree_folder2/teessst", "EPSG:4326")
 #for i in range(len(tree_shapes)):
 #    my_array = np.array(tree_shapes[i].points)
@@ -510,27 +549,3 @@ def find_4_closest_points(points, point):
 #    my_array[:, 0] = my_array[:, 1]
 #    my_array[:, 1] = temp
 #    tree_shapes[i] = my_array
-records = create_records(constants.pwd + "/data/tree_folder2/CORINE2012")
-for i in range(len(records)):
-    record = records[i]
-    text = record[3]
-    record[3] = str(text).replace("Ã¤", "ä").replace("Ã¶", "Ö").replace("Ã¼", "ü").replace("Ã", "Ü").replace("Ã", "ß")
-    records[i] = record
-tree_shapes = io_utils.read_dump_from_file("trees_tmp.dump")
-#patches = create_points(50.00520532919058, 8.646406510673339, 49.767632303668734, 9.118818592516165, constants.point_dist, constants.points_per_patch_sqrt)
-tree_patches = create_points_inner(49.0, 8.0, 51.0, 10.0, 1.0 / get_lat_fac(), 1.0 / get_long_fac(51.0), 1.0)
-#io_utils.dump_to_file(patches, "pat_tmp.dump")
-patches = io_utils.read_dump_from_file("pat_tmp.dump")
-print("Finding max size shapes")
-#tree_shape_distances = find_max_size_shapes(tree_shapes)
-print("Preprocessing trees")
-fgdas = "mä"
-#io_utils.dump_to_file(tree_shape_distances, "tree_shape_dist_tmp.dump")
-tree_shape_distances = io_utils.read_dump_from_file("tree_shape_dist_tmp.dump")
-#prepro = preprocess_trees(tree_patches, tree_shapes, tree_shape_distances, 1)
-#io_utils.dump_to_file(prepro, "prepro_tmp.dump")
-prepro = io_utils.read_dump_from_file("prepro_tmp.dump")
-#find_4_closest_points(tree_patches, [50.0, 9.0])
-print("Fitting tree to patches")
-patches = fit_trees_to_patches3(patches, tree_shapes, tree_shape_distances, records, tree_patches, prepro)
-o = 0
