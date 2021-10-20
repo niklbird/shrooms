@@ -48,8 +48,9 @@ def write_to_GEOJSON(patches):
     print("Amount of dates: " + str(len(patches) * len(patches[0].dates)))
     for patch in patches:
         corner = patch.corners[0]
-        dist_x = constants.point_dist / get_long_fac(corner[0]) / 2.0
-        dist_y = constants.point_dist / get_lat_fac() / 2.0
+
+        dist_x = constants.point_dist / get_lat_fac() / 2.0
+        dist_y = constants.point_dist /get_long_fac(corner[0]) / 2.0
 
         for date in patch.dates:
             point = date.coord

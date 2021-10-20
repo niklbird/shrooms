@@ -5,6 +5,7 @@ import utils
 
 def main():
     # Read in pre-processed data points with tree-data
+    utils.reparse2()
     patches = io_utils.read_dump_from_file(constants.pwd + "/data/patches_weather2.dump")
     # Query weather-data from DWD
     utils.add_weather(patches)
