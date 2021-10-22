@@ -5,7 +5,7 @@ import utils
 
 def main():
     # If desired -> Re-Parse everything
-    # utils.reparse()
+    utils.reparse()
 
     # Read in pre-processed data points with tree-data
     patches = io_utils.read_dump_from_file(constants.pwd + "/data/patches_weather.dump")

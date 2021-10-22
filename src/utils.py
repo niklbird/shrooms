@@ -781,7 +781,7 @@ def reparse():
     start = time.time()
 
     if COMPLETE_REPARSE:
-        tree_shapes, records, lu = parse_in_shape(constants.pwd + "/data/tree_folder2/teessst", "EPSG:4326")
+        tree_shapes, records, lu = parse_in_shape(constants.pwd + "/data/tree_folder/trees", "EPSG:4326")
         # Changing first and second coordinate as format is inconsistent
         for i in range(len(tree_shapes)):
             my_array = np.array(tree_shapes[i].points)
@@ -792,7 +792,7 @@ def reparse():
         io_utils.dump_to_file(tree_shapes, constants.pwd + "/data/trees.dump")
 
     # Read in Shapes and Values of Tree-Data
-    records = create_records(constants.pwd + "/data/tree_folder2/teessst")
+    records = create_records(constants.pwd + "/data/tree_folder/trees")
     tree_shapes = io_utils.read_dump_from_file(constants.pwd + "/data/trees.dump")
 
     # Preprocess Records to remove Encoding-Artifacts
@@ -800,9 +800,9 @@ def reparse():
 
     # Create a Grid of Points
     patches = create_points(50.00520532919058, 8.846406510673339, 49.867632303668734, 9.118818592516165,
-                           constants.point_dist, constants.points_per_patch_sqrt)
+                            constants.point_dist, constants.points_per_patch_sqrt)
 
-    #patches = create_points(50.04028803094584, 8.49786633110003, 49.679084616354025, 9.210604350500015,
+    # patches = create_points(50.04028803094584, 8.49786633110003, 49.679084616354025, 9.210604350500015,
     #                       constants.point_dist, constants.points_per_patch_sqrt)
 
     # Create a second Grid of Tree-Points to speed up Calculations later
@@ -818,9 +818,9 @@ def reparse():
     if COMPLETE_REPARSE:
         # Preprocess Trees: Fit Tree-Shapes to the Tree-Grid
         prepro = preprocess_trees(tree_patches, tree_shapes, tree_shape_distances, 1)
-        io_utils.dump_to_file(prepro, constants.pwd + "/data/prepro_tmp.dump")
+        io_utils.dump_to_file(prepro, constants.pwd + "/data/prepro.dump")
 
-    prepro = io_utils.read_dump_from_file(constants.pwd + "/data/prepro_tmp.dump")
+    prepro = io_utils.read_dump_from_file(constants.pwd + "/data/prepro.dump")
 
     # Now find out which Tree-Type (Shape) each created Data-Point has (Most Effort)
     patches = fit_trees_to_patches(patches, tree_shapes, records, tree_patches, prepro)
@@ -836,4 +836,4 @@ def reparse():
     io_utils.dump_to_file(patches, constants.pwd + "/data/patches_weather.dump")
 
 
-COMPLETE_REPARSE = False
+COMPLETE_REPARSE = True
