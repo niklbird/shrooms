@@ -1,3 +1,6 @@
 web/node_modules
 web/old
 web/js
+*.shp
+*.dbf
+src/.idea
