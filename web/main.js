@@ -1,20 +1,12 @@
-import './style.css';
-import {Map, View} from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
-import GeoJSON from 'ol/format/GeoJSON';
-import 'ol/ol.css';
-import Draw, {
-  createBox,
-  createRegularPolygon,
-} from 'ol/interaction/Draw';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import Vector from 'ol/source/Vector';
-import {Fill, Stroke, Style, Text, Circle as CircleStyle} from 'ol/style';
-import MultiPoint from 'ol/geom/MultiPoint';
-import Projection from 'ol/proj/Projection';
+import Map from './node_modules/ol/Map.js';
+import View from './node_modules/ol/View.js';
 
+import TileLayer from './node_modules/ol/layer/Tile.js';
+import OSM from './node_modules/ol/source/OSM';
+import GeoJSON from './node_modules/ol/format/GeoJSON';
+import VectorLayer from './node_modules/ol/layer/Vector';
+import VectorSource from './node_modules/ol/source/Vector';
+import {Fill, Stroke, Style, Text, Circle as CircleStyle} from './node_modules/ol/style';
 const styles2 = [
   /* We are using two different styles for the polygons:
    *  - The first style is for the polygons themselves.
@@ -200,65 +192,6 @@ const map = new Map({
   })
 });
 
-const typeSelect = document.getElementById('type');
-
-let draw; // global so we can remove it later
-function addInteraction() {
-  let value = typeSelect.value;
-  if (value !== 'None') {
-    let geometryFunction;
-    if (value === 'Square') {
-      value = 'Circle';
-      geometryFunction = createRegularPolygon(4);
-    } else if (value === 'Box') {
-      value = 'Circle';
-      geometryFunction = createBox();
-    } else if (value === 'Star') {
-      value = 'Circle';
-      geometryFunction = function (coordinates, geometry) {
-        const center = coordinates[0];
-        const last = coordinates[coordinates.length - 1];
-        const dx = center[0] - last[0];
-        const dy = center[1] - last[1];
-        const radius = Math.sqrt(dx * dx + dy * dy);
-        const rotation = Math.atan2(dy, dx);
-        const newCoordinates = [];
-        const numPoints = 12;
-        for (let i = 0; i < numPoints; ++i) {
-          const angle = rotation + (i * 2 * Math.PI) / numPoints;
-          const fraction = i % 2 === 0 ? 1 : 0.5;
-          const offsetX = radius * fraction * Math.cos(angle);
-          const offsetY = radius * fraction * Math.sin(angle);
-          newCoordinates.push([center[0] + offsetX, center[1] + offsetY]);
-        }
-        newCoordinates.push(newCoordinates[0].slice());
-        if (!geometry) {
-          geometry = new Polygon([newCoordinates]);
-        } else {
-          geometry.setCoordinates([newCoordinates]);
-        }
-        return geometry;
-      };
-    }
-    draw = new Draw({
-      source: source,
-      type: value,
-      geometryFunction: geometryFunction,
-    });
-    map.addInteraction(draw);
-  }
-}
-
-typeSelect.onchange = function () {
-  map.removeInteraction(draw);
-  addInteraction();
-};
-
-document.getElementById('undo').addEventListener('click', function () {
-  draw.removeLastPoint();
-});
-
-addInteraction();
 
 const style = new Style({
   fill: new Fill({
@@ -280,66 +213,15 @@ const style = new Style({
   }),
 });
 
-const highlightStyle = new Style({
-  stroke: new Stroke({
-    color: '#f00',
-    width: 1,
-  }),
-  fill: new Fill({
-    color: 'rgba(255,0,0,0.1)',
-  }),
-  text: new Text({
-    font: '12px Calibri,sans-serif',
-    fill: new Fill({
-      color: '#000',
-    }),
-    stroke: new Stroke({
-      color: '#f00',
-      width: 3,
-    }),
-  }),
-});
 
-const featureOverlay = new VectorLayer({
-  source: new VectorSource(),
-  map: map,
-  style: function (feature) {
-    highlightStyle.getText().setText(feature.get('name'));
-    return highlightStyle;
-  },
-});
+//map.on('pointermove', function (evt) {
+//  if (evt.dragging) {
+//    return;
+//  }
+//  const pixel = map.getEventPixel(evt.originalEvent);
+//  displayFeatureInfo(pixel);
+//});
 
-let highlight;
-
-const displayFeatureInfo = function (pixel) {
-  const feature = map.forEachFeatureAtPixel(pixel, function (feature) {
-    return feature;
-  });
-  const info = document.getElementById('info');
-  if (feature) {
-    info.innerHTML = feature.getId() + ': ' + feature.get('name');
-  } else {
-    info.innerHTML = '&nbsp;';
-  }
-  if (feature !== highlight) {
-    if (highlight) {
-      featureOverlay.getSource().removeFeature(highlight);
-    }
-    if (feature) {
-      featureOverlay.getSource().addFeature(feature);
-    }
-    highlight = feature;
-  }
-};
-
-map.on('pointermove', function (evt) {
-  if (evt.dragging) {
-    return;
-  }
-  const pixel = map.getEventPixel(evt.originalEvent);
-  displayFeatureInfo(pixel);
-});
-
-map.on('click', function (evt) {
-  displayFeatureInfo(evt.pixel);
-});
+//map.on('click', function (evt) {
+//  displayFeatureInfo(evt.pixel);
+//});
