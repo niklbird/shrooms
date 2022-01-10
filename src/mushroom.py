@@ -103,15 +103,21 @@ def environment_factor(rain, temperature, humidity):
         # If 10mm is perfect amount, this measures the normalized contribution
         ra += 0.5 * min(rain[j], 25) / 14
         temp += 0.3 * temp_deviation(temperature[j], optimal_temp) / 14
+        if humidity[j] is None:
+            humidity[j] = 60
         hum += humidity[j] / 90 / 14
     # Emphasize 2-1 week ago
     for j in range(14, 21):
         ra += 3 * min(rain[j], 25) / 7
         temp += 0.75 * temp_deviation(temperature[j], optimal_temp) / 7
+        if humidity[j] is None:
+            humidity[j] = 60
         hum += humidity[j] / 90 / 7
     for j in range(21, 28):
         ra += 0.75 * min(rain[j], 25) / 7
         temp += 2 * temp_deviation(temperature[j], optimal_temp) / 7
+        if humidity[j] is None:
+            humidity[j] = 60
         hum += humidity[j] / 90 / 7
     norm_rain = 0.3 * (0.5 * 14 + 3 * 7 + 7 * 0.75)
     norm_temp = 3
