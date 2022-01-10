@@ -1,0 +1,10 @@
+numpy
+shapefile
+patch
+numba
+dbfread
+pyproj
+mpl_toolkits
+matplotlib
+pickle
+json
