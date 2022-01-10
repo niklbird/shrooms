@@ -5,6 +5,7 @@ import utils
 
 def main():
     # If desired -> Re-Parse everything
+    # This required downloading all tree data
     # utils.reparse()
 
     # Read in pre-processed data points with tree-data

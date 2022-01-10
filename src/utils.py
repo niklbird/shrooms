@@ -345,7 +345,7 @@ def add_weather(patches):
             # Fill in all missing weather data
             ts = format_timestamp(datetime.datetime.today() - datetime.timedelta(days=i))
 
-            if ts not in weather.keys():
+            if ts not in weather.keys() or weather[ts] is None:
                 weather[ts] = filter_relevant_weather_data(environment_utils.get_weather_data_id(patch_l.station, ts))
 
         patch_l.weather_data = weather
@@ -374,6 +374,11 @@ def calc_dynamic_value(patches):
         # Look at weather of last 30 days
         for i in range(30, 1, -1):
             ts = format_timestamp(datetime.datetime.today() - datetime.timedelta(days=i))
+            if weather[ts] is None or weather[ts]['temperature'] is None:
+                temperatures.append(0)
+                rains.append(0)
+                humidities.append(50)
+                continue
             temperatures.append(weather[ts]['temperature'])
             rains.append(weather[ts]['rain'])
             humidities.append(weather[ts]['humidity'])
@@ -386,7 +391,8 @@ def calc_dynamic_value(patches):
         for date in patch.dates:
             for shroom in date.mushrooms.keys():
                 # Base-Factor, Seasonality, Environment-Factor
-                date.probabilities[shroom] = min(date.mushrooms[shroom] * month_factors[shroom] * dynamic_factor, 1)
+                # min(date.mushrooms[shroom] * month_factors[shroom] * dynamic_factor, 1)
+                date.probabilities[shroom] = min(date.mushrooms[shroom] * dynamic_factor, 1)
 
 
 def calc_static_values(patches):
@@ -799,7 +805,7 @@ def reparse():
     preprocess_records(records)
 
     # Create a Grid of Points
-    patches = create_points(50.00520532919058, 8.846406510673339, 49.867632303668734, 9.118818592516165,
+    patches = create_points(50.013876, 8.654014, 49.686693, 9.196464,
                             constants.point_dist, constants.points_per_patch_sqrt)
 
     # patches = create_points(50.04028803094584, 8.49786633110003, 49.679084616354025, 9.210604350500015,
@@ -836,4 +842,4 @@ def reparse():
     io_utils.dump_to_file(patches, constants.pwd + "/data/patches_weather.dump")
 
 
-COMPLETE_REPARSE = True
+COMPLETE_REPARSE = False
