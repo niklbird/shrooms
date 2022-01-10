@@ -56,93 +56,6 @@ def get_neighbors(i, length):
     return ret
 
 
-def linear_path_finder(points, length):
-    # solution = [cur_point]
-    points = points[0]
-    final_shapes = []
-    used = 0
-    solution_index = [0]
-    cur_shape = [0]
-    while used < len(points):
-        for i in range(1, len(points)):
-            pos_neighbors = []
-
-            for j in range(i, len(points)):
-                if j in solution_index:
-                    continue
-                if is_neighbor(j, solution_index[-1], length):
-                    pos_neighbors.append(j)
-
-            if len(pos_neighbors) == 0 and j not in solution_index:
-                solution_index.append(j)
-                cur_shape.append(j)
-                used += 1
-                break
-
-            elif len(pos_neighbors) == 0:
-                continue
-
-            best_j = pos_neighbors[0]
-            if len(pos_neighbors) > 1:
-                best_dist = 10000
-                for neighbor in pos_neighbors:
-                    dist_tmp = dist_to_middle(ind_to_cord(neighbor, length), length)
-                    if dist_tmp < best_dist:
-                        best_dist = dist_tmp
-                        best_j = neighbor
-
-            solution_index.append(best_j)
-            cur_shape.append(best_j)
-            used += 1
-
-        final_shapes.append(cur_shape)
-        cur_shape = []
-    return final_shapes
-
-
-def unite_shapes(arr):
-    already_handled = []
-    leng = int(np.sqrt(len(arr)))
-    shapes = []
-    for i in range(len(arr)):
-        if i in already_handled:
-            continue
-
-        cur_shape = [i]
-        already_handled.append(i)
-        neighbors = []
-        neighbors_tmp = get_neighbors(i, leng)
-
-        for k in neighbors_tmp:
-            if k not in already_handled:
-                neighbors.append(k)
-
-        cur_val = arr[i][1]
-        while len(neighbors) > 0:
-            j = neighbors[0]
-
-            if arr[j][1] != cur_val:
-                pass
-
-            else:
-                cur_shape.append(j)
-                already_handled.append(j)
-                neighbors_tmp_2 = get_neighbors(j, leng)
-
-                append = 0
-                for k in neighbors_tmp_2:
-                    if k not in already_handled and k not in neighbors:
-                        neighbors.append(k)
-                    if arr[k][1] == cur_val:
-                        append += 1
-                if append == 4:
-                    print("Removing " + str(j))
-                    cur_shape.remove(j)
-            neighbors.remove(j)
-        shapes.append(cur_shape)
-    return shapes
-
-
 def ind_to_cord(i, l):
     return np.mod(i, l), int(np.square(l) / (i + 0.1))
 
@@ -159,14 +72,17 @@ def is_neighbor(i, j, length):
 
 
 def combine_rows(rows):
+    # This currently only runs one iteration that combines each row with the next
+    # Could be improved to next step to also iterate row + 2 and so on
     used_shapes = []
     shapes = []
-    l = 20
+    l = 10
     for i in range(len(rows) - 1):
         row = rows[i][0]
         next_row = rows[i + 1][0]
         j = k = 0
         while j < len(row) and k < len(next_row):
+            # If this shape and the shape have same probabiltity -> Look if can be combined
             if not l*i + j in used_shapes and not l*(i+1) + k in used_shapes and rows[i][1][j] == rows[i + 1][1][k]:
                 shape = row[j]
                 shape_new = next_row[k]
@@ -181,22 +97,22 @@ def combine_rows(rows):
                     used_shapes.append(int(i * l + j))
                     used_shapes.append(int((i + 1) * l + k))
                     shapes.append(final_shape)
-                    print("Reduced")
                 if point_1[1] > point_3[1]:
                     k += 1
                 else:
                     j += 1
             else:
                 j += 1
+
+    # Now at last, also add the shapes that could not be combined
     for i in range(len(rows)):
         for j in range(len(rows[i][0])):
             if int(i*l + j) not in used_shapes:
                 shapes.append([rows[i][0][j], rows[i][1][j]])
-            else:
-                print("already used")
     return shapes
 
-def algorithm4(arr, dist_x, dist_y):
+
+def shape_reduction(arr, dist_x, dist_y):
     l = 10
     shapes = []
     rows = []
@@ -209,7 +125,7 @@ def algorithm4(arr, dist_x, dist_y):
             point = arr[v][0]
             shape = []
             # First Element in Row is starting point
-            if r == 0 or row_tmp[r - 1][1] !=  arr[v][1]:
+            if r == 0 or row_tmp[r - 1][1] != arr[v][1]:
                 shape.append([point[0] + dist_y, point[1] + dist_x])
                 shape.append([point[0] + dist_y, point[1] - dist_x])
                 shape.append([point[0] - dist_y, point[1] - dist_x])
@@ -227,10 +143,8 @@ def algorithm4(arr, dist_x, dist_y):
                 final_shapes_row.append(r)
         shapes.extend(np.array(row_tmp)[final_shapes_row][:,0])
         rows.append([np.array(row_tmp)[final_shapes_row][:,0], np.array(row_tmp)[final_shapes_row][:,1]])
+    # Now after reducing the shapes inside each row -> Combine Rows
     return combine_rows(rows)
-    #return shapes
-
-
 
 
 def write_to_GEOJSON(patches):
@@ -255,20 +169,7 @@ def write_to_GEOJSON(patches):
 
             to_reduce.append([[point[1], point[0]], prop])
 
-            #to_reduce.append([[point[1] + dist_y, point[0] + dist_x], prop])
-            #to_reduce.append([[point[1] + dist_y, point[0] - dist_x], prop])
-            #to_reduce.append([[point[1] - dist_y, point[0] - dist_x], prop])
-            #to_reduce.append([[point[1] - dist_y, point[0] + dist_x], prop])
-            #to_reduce.append([[point[1] + dist_y, point[0] + dist_x], prop])
-
-            #coordinates = [[point[1] + dist_y, point[0] + dist_x], [point[1] - dist_y, point[0] + dist_x],
-            #               [point[1] - dist_y, point[0] - dist_x], [point[1] + dist_y, point[0] - dist_x],
-            #               [point[1] + dist_y, point[0] + dist_x]]
-
-
-
-            #to_reduce.append((coordinates, prop))
-        unified = algorithm4(to_reduce, dist_x, dist_y)
+        unified = shape_reduction(to_reduce, dist_x, dist_y)
 
         print("Before: " + str(len(to_reduce)))
         print("Combination: " + str(len(unified)))
