@@ -1,0 +1,8 @@
+sudo apt-get install llvm
+sudo apt-get install build-essential
+sudo apt install python3-numba
+sudo apt install python3-mpltoolkits.basemap
+
+
+
+use pip3 with version > 19
