@@ -76,14 +76,17 @@ def combine_rows(rows):
     # Could be improved to next step to also iterate row + 2 and so on
     used_shapes = []
     shapes = []
-    l = 10
+    l = 0
+    reduced_a_shape = False
     for i in range(len(rows) - 1):
         row = rows[i][0]
         next_row = rows[i + 1][0]
         j = k = 0
         while j < len(row) and k < len(next_row):
             # If this shape and the shape have same probabiltity -> Look if can be combined
-            if not l*i + j in used_shapes and not l*(i+1) + k in used_shapes and rows[i][1][j] == rows[i + 1][1][k]:
+            val1 = rows[i][1][j]
+            val2 = rows[i + 1][1][k]
+            if not l*i + j in used_shapes and not l*(i+1) + k in used_shapes and val1 == val2 and val1 != val2:
                 shape = row[j]
                 shape_new = next_row[k]
                 point_0 = shape[1]
@@ -97,18 +100,22 @@ def combine_rows(rows):
                     used_shapes.append(int(i * l + j))
                     used_shapes.append(int((i + 1) * l + k))
                     shapes.append(final_shape)
+                    reduced_a_shape = True
                 if point_1[1] > point_3[1]:
                     k += 1
                 else:
                     j += 1
             else:
                 j += 1
+        l += 1
 
     # Now at last, also add the shapes that could not be combined
     for i in range(len(rows)):
         for j in range(len(rows[i][0])):
             if int(i*l + j) not in used_shapes:
                 shapes.append([rows[i][0][j], rows[i][1][j]])
+    #if reduced_a_shape:
+    #    return combine_rows(shapes)
     return shapes
 
 
@@ -141,6 +148,7 @@ def shape_reduction(arr, dist_x, dist_y):
                 # Keep upper left and lower left, generate new upper right and lower right points
                 row_tmp.append([new_shape, shape[1]])
                 final_shapes_row.append(r)
+        # Add all elements to list
         shapes.extend(np.array(row_tmp)[final_shapes_row][:,0])
         rows.append([np.array(row_tmp)[final_shapes_row][:,0], np.array(row_tmp)[final_shapes_row][:,1]])
     # Now after reducing the shapes inside each row -> Combine Rows
@@ -156,9 +164,18 @@ def write_to_GEOJSON(patches):
     print("Amount of dates: " + str(len(patches) * len(patches[0].dates)))
     for patch in patches:
         corner = patch.corners[0]
+        corner_2 = patch.corners[2]
+
+        dist = corner_2[1] - corner[1]
+
+        print("Dist " + str(dist / 20.0))
 
         dist_x = constants.point_dist / get_lat_fac() / 2.0
         dist_y = constants.point_dist / get_long_fac(corner[0]) / 2.0
+
+        dist_y = dist / 20.0
+
+        print(dist_y)
 
         to_reduce = []
 
@@ -169,9 +186,10 @@ def write_to_GEOJSON(patches):
 
             to_reduce.append([[point[1], point[0]], prop])
 
+        print("Before: " + str(len(to_reduce)))
+
         unified = shape_reduction(to_reduce, dist_x, dist_y)
 
-        print("Before: " + str(len(to_reduce)))
         print("Combination: " + str(len(unified)))
 
         for j in range(len(unified)):

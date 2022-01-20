@@ -98,7 +98,6 @@ def create_points_inner(topx, topy, botx, boty, x_add, y_add, dist):
         while cord[0] + x_add < botx:
             cord = [cord[0] + x_add, cord[1]]
             cords.append(cord)
-
         cord = [topx, cord[1] + y_add]
 
     # If last coordinate is only excluded because of round-errors, include it
@@ -107,7 +106,22 @@ def create_points_inner(topx, topy, botx, boty, x_add, y_add, dist):
         while cord[0] + x_add < botx:
             cord = [cord[0] + x_add, cord[1]]
             cords.append(cord)
+    return cords
 
+
+def create_points_inner_fixed(topx, topy, x_add, y_add, dist, amount):
+    # Create points from topx to boty without creating patches
+    cords = []
+    cord = [topx, topy]
+
+    for i in range(amount):
+        inner_counter = 0
+        cords.append(cord)
+        for j in range(amount - 1):
+            inner_counter += 1
+            cord = [cord[0] + x_add, cord[1]]
+            cords.append(cord)
+        cord = [topx, cord[1] + y_add]
     return cords
 
 
@@ -140,11 +154,10 @@ def create_points(topx, topy, botx, boty, dist, patch_size_sqrt):
 
     # Iterate Grid
     while cord[1] + patch_size_sqrt * y_add < y_end:
+        y_added = 0
         while cord[0] + patch_size_sqrt * x_add < x_end:
             # For each patch, create patch_size points (Standard: 100)
-            patch_points = create_points_inner(cord[0], cord[1], cord[0] +
-                                               patch_size_sqrt * x_add, cord[1]
-                                               + patch_size_sqrt * y_add, x_add, y_add, dist)
+            patch_points = create_points_inner_fixed(cord[0], cord[1], x_add, y_add, dist, patch_size_sqrt)
 
             # Create additional Information about Patch
             middle = get_middle(cord[0], cord[0] + patch_size_sqrt * x_add, cord[1], cord[1] + patch_size_sqrt * y_add)
@@ -155,10 +168,12 @@ def create_points(topx, topy, botx, boty, dist, patch_size_sqrt):
 
             # Adapt coordinate for next patch
             cord = [cord[0] + patch_size_sqrt * x_add, cord[1]]
-            y_add = dist / get_long_fac(cord[0])
+            y_added += y_add
 
-        cord = [x_start, cord[1] + patch_size_sqrt * y_add]
+        cord = [x_start, cord[1] + patch_size_sqrt*y_add]
         y_add = dist / get_long_fac(cord[0])
+
+
 
     print("Created amount of Patches: " + str(len(patches)))
     print("Created amount of Points: " + str(len(patches) * (patch_size_sqrt ** 2)))
@@ -653,6 +668,7 @@ def create_dates(patch, fitting_shapes, possible_records, possible_shapes):
         if j == skip_ind:
             # Recalc is used to improve approximation
             # Idea: Skip 10 values -> If value change then -> Recalc the 9 previous values
+            # This provides considerable speed-up
             skip_ind = -1
             cur_recalc = False
             j += 1
@@ -805,28 +821,28 @@ def reparse():
     preprocess_records(records)
 
     # Create a Grid of Points
-    patches = create_points(50.013876, 8.654014, 49.686693, 9.196464,
+    patches = create_points(49.970118, 8.899740, 49.841248, 9.128207,
                             constants.point_dist, constants.points_per_patch_sqrt)
 
     # patches = create_points(50.04028803094584, 8.49786633110003, 49.679084616354025, 9.210604350500015,
     #                       constants.point_dist, constants.points_per_patch_sqrt)
 
     # Create a second Grid of Tree-Points to speed up Calculations later
-    tree_patches = create_points_inner(49.0, 8.0, 51.0, 10.0, 1.0 / get_lat_fac(), 1.0 / get_long_fac(51.0), 1.0)
+    tree_patches = create_points_inner(49.0, 8.5, 50.0, 10.0, 1.0 / get_lat_fac(), 1.0 / get_long_fac(51.0), 1.0)
 
     if COMPLETE_REPARSE:
         # Find max. Size of each Tree-Shape
         tree_shape_distances = find_max_size_shapes(tree_shapes)
-        io_utils.dump_to_file(tree_shape_distances, constants.pwd + "/data/tree_shape_dist.dump")
+        io_utils.dump_to_file(tree_shape_distances, constants.pwd + "/src/dumps/tree_shape_dist.dump")
 
-    tree_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/data/tree_shape_dist.dump")
+    tree_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/src/dumps/tree_shape_dist.dump")
 
     if COMPLETE_REPARSE:
         # Preprocess Trees: Fit Tree-Shapes to the Tree-Grid
         prepro = preprocess_trees(tree_patches, tree_shapes, tree_shape_distances, 1)
-        io_utils.dump_to_file(prepro, constants.pwd + "/data/prepro.dump")
+        io_utils.dump_to_file(prepro, constants.pwd + "/src/dumps/prepro.dump")
 
-    prepro = io_utils.read_dump_from_file(constants.pwd + "/data/prepro.dump")
+    prepro = io_utils.read_dump_from_file(constants.pwd + "/src/dumps/prepro.dump")
 
     # Now find out which Tree-Type (Shape) each created Data-Point has (Most Effort)
     patches = fit_trees_to_patches(patches, tree_shapes, records, tree_patches, prepro)
@@ -839,7 +855,7 @@ def reparse():
     print("Total Time for Parsing: " + str(end - start))
     print("Time per Patch: " + str((end - start) / float(len(patches))))
 
-    io_utils.dump_to_file(patches, constants.pwd + "/data/patches_weather.dump")
+    io_utils.dump_to_file(patches, constants.pwd + "/src/dumps/patches_weather.dump")
 
 
-COMPLETE_REPARSE = False
+COMPLETE_REPARSE = True
