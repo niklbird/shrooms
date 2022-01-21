@@ -2,11 +2,14 @@ import io_utils
 import constants
 import utils
 
+'''
+Main file of the mushroom app. Here is where all the magic happens.
+'''
 
 def main():
     # If desired -> Re-Parse everything
-    # This required downloading all tree data
-    #utils.reparse()
+    # This required downloading all auxiliary data
+    # utils.reparse()
 
     # Read in pre-processed data points with tree-data
     patches = io_utils.read_dump_from_file(constants.pwd + "/src/dumps/patches_weather.dump")

@@ -2,8 +2,10 @@ import xml.etree.ElementTree as ET
 import csv
 import matplotlib.pyplot as plt
 
+'''
+This class represents one Mushroom Type.
+'''
 
-# Class that represents one mushroom-type object
 class Mushroom:
 
     def __init__(self, attributes: dict):
