@@ -7,6 +7,7 @@ from utils import *
 Utilities to deal with IO-Operations. This includes writing the final data to a GEOJSON file.
 '''
 
+
 def dump_to_file(arr, filename):
     with open(filename, 'wb') as fp:
         pickle.dump(arr, fp)
@@ -53,51 +54,6 @@ def write_to_GEOJSON(patches):
             'properties': props
         })
 
-    counter = 0
-    for patch in patches:
-        continue
-        counter += 1
-        corner = patch.corners[0]
-        corner_2 = patch.corners[2]
-
-        dist = corner_2[1] - corner[1]
-
-        dist_x = constants.point_dist / get_lat_fac() / 2.0
-
-        dist_y = dist / (constants.points_per_patch_sqrt * 2.0)
-
-        to_reduce = []
-
-        for date in patch.dates:
-            point = date.coord
-
-            prop = date.probabilities['Steinpilz']
-
-            to_reduce.append([[point[1], point[0]], prop])
-
-        print("Before: " + str(len(to_reduce)))
-
-        unified = shape_reduction(to_reduce, dist_x, dist_y, constants.points_per_patch_sqrt,
-                                  constants.points_per_patch_sqrt)
-
-        # unified = remove_zero_shapes(unified)
-
-        print("Combination: " + str(len(unified)))
-
-        for j in range(len(unified)):
-            new_cords = unified[j][0]
-            new_cords.append(new_cords[0])
-            geom = {}
-            props = {'color': 'rgba(0, 255, 0, ' + str(min(0.5 * unified[j][1], 0.5)) + ')'}
-            geom['type'] = 'Polygon'
-            # geom['coordinates'] = [coordinates]
-            geom['coordinates'] = [new_cords]
-            data['features'].append({
-                'type': 'Feature',
-                'geometry': geom,
-                'properties': props
-            })
-
-    with open('data.txt', 'w') as outfile:
+    with open(constants.pwd + '/web/data.txt', 'w') as outfile:
         json.dump(data, outfile)
     return

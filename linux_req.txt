@@ -6,3 +6,5 @@ sudo apt install python3-mpltoolkits.basemap
 
 
 use pip3 with version > 19
+
+you will also need git lfs installed

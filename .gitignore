@@ -2,8 +2,10 @@ web/node_modules
 web/old
 web/js
 *.shp
-*.dbf
 src/.idea
 *.pyc
 *.zip
 *.xml
+.idea
+data/data.txt
+web/data.txt

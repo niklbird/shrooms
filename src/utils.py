@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import datetime
 import mushroom
 import time
+import sys
 
 from reparse_utils import *
 
@@ -139,8 +140,8 @@ def preprocess_records(records):
     for i in range(len(records)):
         record = records[i]
         text = record[3]
-        record[3] = str(text).replace("Ã¤", "ä").replace("Ã¶", "Ö").replace("Ã¼", "ü").replace("Ã", "Ü").replace("Ã",
-                                                                                                                  "ß")
+        record[3] = str(text).replace("Ã¤", "ae").replace("Ã¶", "Oe").replace("Ã¼", "ue").replace("Ã", "Ue").replace("Ã",
+                                                                                                                  "ss")
         records[i] = record
 
 
@@ -335,12 +336,11 @@ def reparse():
             my_array[:, 0] = my_array[:, 1]
             my_array[:, 1] = temp
             tree_shapes[i] = my_array
-        io_utils.dump_to_file(tree_shapes, constants.pwd + "/data/trees.dump")
+        io_utils.dump_to_file(tree_shapes, constants.pwd + "/data/dumps/trees.dump")
 
     # Read in Shapes and Values of Tree-Data
     records = create_records(constants.pwd + "/data/tree_folder/trees")
-    tree_shapes = io_utils.read_dump_from_file(constants.pwd + "/data/trees.dump")
-
+    tree_shapes = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/trees.dump")
     # Preprocess Records to remove Encoding-Artifacts
     preprocess_records(records)
 
@@ -357,16 +357,16 @@ def reparse():
     if COMPLETE_REPARSE:
         # Find max. Size of each Tree-Shape
         tree_shape_distances = find_max_size_shapes(tree_shapes)
-        io_utils.dump_to_file(tree_shape_distances, constants.pwd + "/src/dumps/tree_shape_dist.dump")
+        io_utils.dump_to_file(tree_shape_distances, constants.pwd + "/data/dumps/tree_shape_dist.dump")
 
-    tree_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/src/dumps/tree_shape_dist.dump")
+    tree_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/tree_shape_dist.dump")
 
     if COMPLETE_REPARSE:
         # Preprocess Trees: Fit Tree-Shapes to the Tree-Grid
         prepro = preprocess_trees(tree_patches, tree_shapes, tree_shape_distances, 1)
-        io_utils.dump_to_file(prepro, constants.pwd + "/src/dumps/prepro.dump")
+        io_utils.dump_to_file(prepro, constants.pwd + "/data/dumps/prepro.dump")
 
-    prepro = io_utils.read_dump_from_file(constants.pwd + "/src/dumps/prepro.dump")
+    prepro = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/prepro.dump")
 
     # Now find out which Tree-Type (Shape) each created Data-Point has
     # This requires the most calculation effort -> Speed-Up as much as possible
@@ -380,7 +380,7 @@ def reparse():
     print("Total Time for Parsing: " + str(end - start))
     print("Time per Patch: " + str((end - start) / float(len(patches))))
 
-    io_utils.dump_to_file(patches, constants.pwd + "/src/dumps/patches_weather.dump")
+    io_utils.dump_to_file(patches, constants.pwd + "/data/dumps/patches_weather.dump")
 
 
 COMPLETE_REPARSE = True
