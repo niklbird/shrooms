@@ -1,6 +1,10 @@
 import os
 from pathlib import Path
 
+'''
+Constants used anywhere in the program.
+'''
+
 treeNames_l = {"pAbies": "Tanne", "pAcer": "Ahorn",
                "pAll": "Gesamt", "pAlnus": "Erle", "pBetula": "Birke", "pCarpinus": "Hainbuche",
                "pCastanea": "Kastanie",

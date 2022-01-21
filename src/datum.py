@@ -1,4 +1,6 @@
-# This represents one datapoint
+"""
+This class represents one single data point on the map.
+"""
 class Datum:
 
     def __init__(self, coord, trees, soils):

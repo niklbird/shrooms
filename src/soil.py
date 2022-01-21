@@ -1,6 +1,8 @@
 import xml.etree.ElementTree as ET
 
-# TODO
+'''
+This file is not used yet -> May later be used to also include soil information in the processing.
+'''
 class Soil:
     def __init__(self, attributes: dict):
         self.attr = attributes

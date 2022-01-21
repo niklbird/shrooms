@@ -2,6 +2,11 @@ import random
 from numba import jit
 import numpy as np
 
+'''
+The sole purpose of this file is to test algorithm ideas.
+'''
+
+
 size = 20
 
 

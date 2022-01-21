@@ -1,4 +1,6 @@
-# Collection of all points that belong to an area with same weather (1km x 1km) for easier processing
+"""
+Collection of all points that belong to an area with same weather (1km x 1km) for easier processing
+"""
 class Patch:
 
     def __init__(self, points, middle, station, corners):

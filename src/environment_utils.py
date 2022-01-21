@@ -5,6 +5,11 @@ import numpy as np
 from numpy import genfromtxt
 import constants
 
+'''
+Utilities dealing with receiving and processing weather data from the Deutscher Wetterdienst.
+'''
+
+
 dwd = DwdWeather(resolution="daily")
 querried = {};
 
