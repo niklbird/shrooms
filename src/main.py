@@ -9,7 +9,7 @@ Main file of the mushroom app. Here is where all the magic happens.
 def main():
     # If desired -> Re-Parse everything
     # This required downloading all auxiliary data
-    utils.reparse()
+    # utils.reparse()
 
     # Read in pre-processed data points with tree-data
     patches = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/patches_weather.dump")
