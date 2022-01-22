@@ -5,16 +5,8 @@ dbfread
 matplotlib==3.2
 numba
 dwdweather2
-
-
 shapefile
 patch
-
-
-
-
-
-
 mpl_toolkits
 pickle
 json
