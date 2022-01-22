@@ -7,5 +7,3 @@ src/.idea
 *.zip
 *.xml
 .idea
-data/data.txt
-web/data.txt
