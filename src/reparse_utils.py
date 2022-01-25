@@ -1,20 +1,28 @@
 import numpy as np
 import shapefile
+
+import mushroom
 import patch
 import environment_utils
 from numba import jit
 from dbfread import DBF
 from pyproj import Proj
 
+import time
+
 import datum
 
 import matplotlib.path as mpltPath
 
 import constants
+
+import io_utils
+
 '''
 This File contains all operations that are related to do the geometrical processing of the data points.
 This includes creating a grid of points and fitting each point with its corresponding tree-types and weather-station.
 '''
+
 
 @jit(nopython=True)
 def get_lat_fac():
@@ -515,7 +523,7 @@ def create_dates(patch, fitting_shapes, possible_records, possible_shapes):
                     fail_counter = 0
                     trees, last_fit = no_fitting_shape(np.array(patch.points[j]), possible_shapes, possible_records)
 
-                    patch.dates.append(datum.Datum(patch.points[j], trees, 0))
+                    patch.dates[j].trees = trees
                     skip_ind = j
                     # If the value changed to 10 points ago -> Calculate the skipped points
                     if trees != trees_before:
@@ -525,7 +533,7 @@ def create_dates(patch, fitting_shapes, possible_records, possible_shapes):
                     j += 1
                     continue
                 else:
-                    patch.dates.append(datum.Datum(patch.points[j], possible_records[last_fit], 0))
+                    patch.dates[j].trees = possible_records[last_fit]
                     fail_counter += 1
                     j += 1
                     continue
@@ -533,13 +541,14 @@ def create_dates(patch, fitting_shapes, possible_records, possible_shapes):
             else:
                 # This only occurs for the first fail in the patch or after a recalculation
                 trees, last_fit = no_fitting_shape(np.array(patch.points[j]), possible_shapes, possible_records)
-                patch.dates.append(datum.Datum(patch.points[j], trees, 0))
+                patch.dates[j].trees = trees
                 j += 1
                 continue
         if not cur_recalc:
             trees = possible_records[fitting_shapes[j]]
-            patch.dates.append(datum.Datum(patch.points[j], trees, 0))
+            patch.dates[j].trees = trees
         j += 1
+    return patch
 
 
 def no_fitting_shape(points, possible_shapes, possible_records):
@@ -571,7 +580,7 @@ def fit_trees_to_patches(patches, tree_shapes_points, tree_records, tree_patches
                                                                                patch)
         possible_shapes_np = np.array(possible_shapes)
         # Calculate the actual shape for each point in the patch
-        create_dates(patch, fitting_shapes, possible_records, possible_shapes_np)
+        patches[i] = create_dates(patch, fitting_shapes, possible_records, possible_shapes_np)
     return patches
 
 
@@ -632,4 +641,118 @@ def matlab_shape_contains_point(shape, point):
     return inside2
 
 
+def calc_static_values(patches):
+    # Calculate weather-independent factor for each point
+    mushrooms = mushroom.read_XML('../data/mushrooms_databank.xml')
+    counter = 0
+    for patch in patches:
+        counter += 1
+        for date in patch.dates:
+            trees = date.trees
+            for shroom in mushrooms.values():
+                date.mushrooms[shroom.attr['name']] = mushroom.tree_value_new(shroom, trees)
 
+
+def preprocess_records(records):
+    # Preprocess records, remove artifcats from Umlaute
+    # This is hacky, better to chose correct encoding but I could not be bothered
+    for i in range(len(records)):
+        record = records[i]
+        text = record[3]
+        record[3] = str(text).replace("Ã¤", "ae").replace("Ã¶", "Oe").replace("Ã¼", "ue").replace("Ã", "Ue").replace(
+            "Ã",
+            "ss")
+        records[i] = record
+
+
+def get_patches_shape(patches):
+    c = 0
+    while patches[c].corners[0][1] == patches[c + 1].corners[0][1]:
+        c += 1
+    return c + 1, int(len(patches) / (c + 1))
+
+
+def soil_parse(points):
+    # Parse in Soil Data
+    soil_shapes, records, lu = parse_in_shape(constants.pwd + "/data/soil_folder/Bodenarten", "EPSG:4326")
+    # Changing first and second coordinate as format is inconsistent
+    for i in range(len(soil_shapes)):
+        my_array = np.array(soil_shapes[i].points)
+        temp = np.copy(my_array[:, 0])
+        my_array[:, 0] = my_array[:, 1]
+        my_array[:, 1] = temp
+        soil_shapes[i] = my_array
+    io_utils.dump_to_file(soil_shapes, constants.pwd + "/data/dumps/soils.dump")
+    soil_shapes = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/trees.dump")
+    # Preprocess Records to remove Encoding-Artifacts
+    preprocess_records(records)
+    soil_patches = create_points_inner(49.0, 8.0, 50.0, 9.5, 1.0 / get_lat_fac(), 1.0 / get_long_fac(50.0), 1.0)
+    soil_shape_distances = find_max_size_shapes(soil_shapes)
+    io_utils.dump_to_file(soil_shape_distances, constants.pwd + "/data/dumps/soil_shape_dist.dump")
+    prepro = preprocess_trees(soil_patches, soil_shapes, soil_shape_distances, 1.0)
+    a = 0
+
+
+def fill_patches_with_empy_dates(patches):
+    for j in range(len(patches)):
+        for i in range(len(patches[j].points)):
+            patches[j].dates.append(datum.Datum(patches[j].points[i]))
+    return patches
+
+
+def reparse(patches):
+    # Recreate everything
+    start = time.time()
+
+    COMPLETE_REPARSE = False
+
+    if COMPLETE_REPARSE:
+        tree_shapes, records, lu = parse_in_shape(constants.pwd + "/data/tree_folder/trees", "EPSG:4326")
+        # Changing first and second coordinate as format is inconsistent
+        for i in range(len(tree_shapes)):
+            my_array = np.array(tree_shapes[i].points)
+            temp = np.copy(my_array[:, 0])
+            my_array[:, 0] = my_array[:, 1]
+            my_array[:, 1] = temp
+            tree_shapes[i] = my_array
+        io_utils.dump_to_file(tree_shapes, constants.pwd + "/data/dumps/trees.dump")
+
+    # Read in Shapes and Values of Tree-Data
+    records = create_records(constants.pwd + "/data/tree_folder/trees")
+    tree_shapes = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/trees.dump")
+    # Preprocess Records to remove Encoding-Artifacts
+    preprocess_records(records)
+
+    fill_patches_with_empy_dates(patches)
+
+    soil_parse(patches)
+
+    # patches = create_points(50.04028803094584, 8.49786633110003, 49.679084616354025, 9.210604350500015,
+    #                       constants.point_dist, constants.points_per_patch_sqrt)
+
+    # Create a second Grid of Tree-Points to speed up Calculations later
+    tree_patches = create_points_inner(49.0, 8.0, 50.0, 9.5, 1.0 / get_lat_fac(), 1.0 / get_long_fac(50.0), 1.0)
+
+    if COMPLETE_REPARSE:
+        # Find max. Size of each Tree-Shape
+        tree_shape_distances = find_max_size_shapes(tree_shapes)
+        io_utils.dump_to_file(tree_shape_distances, constants.pwd + "/data/dumps/tree_shape_dist.dump")
+
+    tree_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/tree_shape_dist.dump")
+
+    if COMPLETE_REPARSE:
+        # Preprocess Trees: Fit Tree-Shapes to the Tree-Grid
+        prepro = preprocess_trees(tree_patches, tree_shapes, tree_shape_distances, 1)
+        io_utils.dump_to_file(prepro, constants.pwd + "/data/dumps/prepro.dump")
+
+    prepro = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/prepro.dump")
+
+    # Now find out which Tree-Type (Shape) each created Data-Point has
+    # This requires the most calculation effort -> Speed-Up as much as possible
+    patches = fit_trees_to_patches(patches, tree_shapes, records, tree_patches, prepro)
+    calc_static_values(patches)
+    end = time.time()
+    print("Total Time for Parsing: " + str(end - start))
+    print("Time per Patch: " + str((end - start) / float(len(patches))))
+    return patches
+    # Lastly calculate static probabilities for each Point, depending on the Tree-Types present there

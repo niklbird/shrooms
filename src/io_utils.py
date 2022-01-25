@@ -2,6 +2,7 @@ import pickle
 import json
 import constants
 from utils import *
+import os
 
 '''
 Utilities to deal with IO-Operations. This includes writing the final data to a GEOJSON file.
@@ -19,6 +20,31 @@ def read_dump_from_file(filename):
         arr = pickle.load(fp)
         fp.close()
         return arr
+
+
+def clear_directory(directory):
+    filelist = [f for f in os.listdir(directory) if f.endswith(".dump")]
+    for f in filelist:
+        os.remove(os.path.join(directory, f))
+
+
+def patches_to_folder(patches):
+    clear_directory(constants.pwd + "/data/dumps/patches/")
+    for i in range(len(patches)):
+        patches_t = patches[i]
+        io_utils.dump_to_file(patches_t, constants.pwd + "/data/dumps/patches/patches_weather" + str(i) + ".dump")
+
+
+def read_patches_from_folder(directory):
+    filelist = [f for f in os.listdir(directory) if f.endswith(".dump")]
+    patches = []
+    for f in filelist:
+        patches.append(io_utils.read_dump_from_file(os.path.join(directory, f)))
+    return patches
+
+
+def flatten_patches(patches):
+    return [item for sublist in patches for item in sublist]
 
 
 def write_to_GEOJSON(patches):

@@ -51,15 +51,15 @@ def tree_value(mushroom, trees: dict):
 
 def tree_value_new(mushroom, trees: str):
     com_fac = 1
-    if trees == "Mischwälder":
+    if trees == "Mischwaelder":
         asfo = 0
     if mushroom.attr['commonness'] == "Selten":
         com_fac = 0.33
     hardwood = 0
-    if trees == "Mischwälder" or trees == "Laubwälder":
+    if trees == "Mischwaelder" or trees == "Laubwaelder":
         hardwood = 1
     softwood = 0
-    if trees == "Mischwälder" or trees == "Nadelwälder":
+    if trees == "Mischwaelder" or trees == "Nadelwaelder":
         softwood = 1
     wt = mushroom.attr['woodtype']
     wood_type_factor = min(wt[0] * hardwood + wt[1] * softwood, 1)
