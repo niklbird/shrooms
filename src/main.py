@@ -9,6 +9,8 @@ Main file of the mushroom app. Here is where all the magic happens.
 
 Reparse = True
 
+Recover = True
+
 def main():
     if Reparse:
         patches = reparse_utils.create_points(49.959518, 8.729952, 49.821941, 9.067095,
@@ -16,11 +18,22 @@ def main():
 
         patches_split = utils.split_patches(patches, 300)
 
-        parsed_patches = []
-        for patch in patches_split:
-            parsed_patches.append(reparse_utils.reparse(patch))
+        file_names = io_utils.generate_file_names(len(patches_split))
 
-        io_utils.patches_to_folder(parsed_patches)
+        if not Recover:
+            io_utils.clear_directory(constants.pwd + "/data/dumps/patches/")
+
+        start_point = 0
+
+        if Recover:
+            start_point = io_utils.get_dumpamount_in_folder(constants.pwd + "/data/dumps/patches/")
+
+        for i in range(start_point, len(patches_split)):
+            parsed = reparse_utils.reparse(patches_split[i])
+            io_utils.dump_to_file(parsed, constants.pwd + file_names[i])
+
+        #parsed_patches = []
+        #io_utils.patches_to_folder(parsed_patches)
 
         # io_utils.dump_to_file(patches, constants.pwd + "/data/dumps/patches_weather.dump")
 

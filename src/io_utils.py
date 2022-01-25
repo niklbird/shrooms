@@ -28,11 +28,19 @@ def clear_directory(directory):
         os.remove(os.path.join(directory, f))
 
 
+def get_dumpamount_in_folder(directory):
+    return len([f for f in os.listdir(directory) if f.endswith(".dump")])
+
+
 def patches_to_folder(patches):
     clear_directory(constants.pwd + "/data/dumps/patches/")
     for i in range(len(patches)):
         patches_t = patches[i]
         io_utils.dump_to_file(patches_t, constants.pwd + "/data/dumps/patches/patches_weather" + str(i) + ".dump")
+
+
+def generate_file_names(len_patches):
+    return ["/data/dumps/patches/patches_weather" + str(i) + ".dump" for i in range(len_patches)]
 
 
 def read_patches_from_folder(directory):
