@@ -81,7 +81,7 @@ def add_weather(patches):
 def get_month_factors(month):
     # Factor that indicates if mushroom is in season
     ret = {}
-    mushroooms = mushroom.read_XML('../data/mushrooms_databank.xml')
+    mushroooms = mushroom.read_mushroom_XML('../data/mushrooms_databank.xml')
     for s_name in mushroooms.keys():
         ret[s_name] = int(
             int(mushroooms[s_name].attr['seasonStart']) <= month <= int(mushroooms[s_name].attr['seasonEnd']))

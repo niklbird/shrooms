@@ -9,14 +9,14 @@ Main file of the mushroom app. Here is where all the magic happens.
 
 Reparse = True
 
-Recover = True
+Recover = False
 
 def main():
     if Reparse:
-        patches = reparse_utils.create_points(49.959518, 8.729952, 49.821941, 9.067095,
+        patches = reparse_utils.create_points(49.938751, 8.405169, 49.596373, 9.196185,
                                               constants.point_dist, constants.points_per_patch_sqrt)
 
-        patches_split = utils.split_patches(patches, 300)
+        patches_split = utils.split_patches(patches, 100)
 
         file_names = io_utils.generate_file_names(len(patches_split))
 

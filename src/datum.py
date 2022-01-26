@@ -15,3 +15,9 @@ class Datum:
 
     def set_soil(self, soil):
         self.soil = soil
+
+    def set_env(self, value, trees_bool):
+        if trees_bool:
+            self.trees = value
+        else:
+            self.soil = value
