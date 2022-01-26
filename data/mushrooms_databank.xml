@@ -57,7 +57,7 @@
     <seasonStart>7</seasonStart>
     <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
-    <trees>All</trees>
+    <trees>ALL</trees>
     <habitat>Waldrand, Wiese</habitat>
     <ph>ALL</ph>
     <soil>ALL</soil>
@@ -70,7 +70,7 @@
     <seasonStart>7</seasonStart>
     <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
-    <trees>All</trees>
+    <trees>ALL</trees>
     <habitat>Wald</habitat>
     <ph>ALL</ph>
     <soil>ALL</soil>
@@ -98,7 +98,7 @@
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>Fichte,Buche</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
+    <ph>ALL</ph>
     <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
@@ -111,7 +111,7 @@
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>Fichte</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
+    <ph>ALL</ph>
     <soil>Kalk</soil>
     <commonness>Selten</commonness>
     <poison>Ungenießbar</poison>
@@ -122,9 +122,9 @@
     <seasonStart>7</seasonStart>
     <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
-    <trees>All</trees>
+    <trees>ALL</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
+    <ph>ALL</ph>
     <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Giftig</poison>
@@ -138,7 +138,7 @@
     <trees>Fichte,Kiefer</trees>
     <habitat>Wald,Moor</habitat>
     <ph>Sauer</ph>
-    <soil>All</soil>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>440</page>
@@ -150,8 +150,8 @@
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Eiche,Buche,Kiefer,Fichte</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>442</page>
@@ -163,8 +163,8 @@
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Fichte</trees>
     <habitat>Wald,Moor</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Ungenießbar</poison>
     <page>458</page>
@@ -189,21 +189,21 @@
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Buche,Eiche,Fichte</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>468</page>
   </mushroom>
   <mushroom>
-    <name lang="de">Gallenröhrling</name>
+    <name lang="de">GALLenröhrling</name>
     <seasonStart>6</seasonStart>
     <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Kiefer,Fichte</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Ungenießbar</poison>
     <page>474</page>
@@ -216,7 +216,7 @@
     <trees>Kiefer,Fichte</trees>
     <habitat>Wald</habitat>
     <ph>Sauer</ph>
-    <soil>All</soil>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>476</page>
@@ -226,10 +226,10 @@
     <seasonStart>7</seasonStart>
     <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
-    <trees>All</trees>
+    <trees>ALL</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>476</page>
@@ -239,10 +239,10 @@
     <seasonStart>7</seasonStart>
     <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
-    <trees>All</trees>
+    <trees>ALL</trees>
     <habitat>Wald,Wiesen</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>478</page>
@@ -254,8 +254,8 @@
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Kiefer,Fichte</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>486</page>
@@ -267,8 +267,8 @@
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Lärchen</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>488</page>
@@ -280,8 +280,8 @@
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Fichte,Kiefer,Buche</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>556</page>
@@ -304,23 +304,23 @@
     <seasonStart>7</seasonStart>
     <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
-    <trees>All</trees>
+    <trees>ALL</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
+    <ph>ALL</ph>
     <soil>Kalk</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>564</page>
   </mushroom>
   <mushroom>
-    <name lang="de">Koralle</name>
+    <name lang="de">KorALLe</name>
     <seasonStart>8</seasonStart>
     <seasonEnd>10</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>Fichte,Kiefer,Buche</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Ungenießbar</poison>
     <page>584</page>
@@ -332,8 +332,8 @@
     <woodtype>Hardwood</woodtype>
     <trees>Kiefer</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>592</page>
@@ -343,10 +343,10 @@
     <seasonStart>7</seasonStart>
     <seasonEnd>11</seasonEnd>
     <woodtype>Softwood,Hardwood</woodtype>
-    <trees>All</trees>
+    <trees>ALL</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>594</page>
@@ -356,10 +356,10 @@
     <seasonStart>5</seasonStart>
     <seasonEnd>11</seasonEnd>
     <woodtype>Softwood,Hardwood</woodtype>
-    <trees>All</trees>
+    <trees>ALL</trees>
     <habitat>Wald,Wiese</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Ungenießbar</poison>
     <page>618</page>
@@ -369,10 +369,10 @@
     <seasonStart>3</seasonStart>
     <seasonEnd>5</seasonEnd>
     <woodtype>Hardwood</woodtype>
-    <trees>All</trees>
+    <trees>ALL</trees>
     <habitat>Wald,Wiese</habitat>
-    <ph>All</ph>
-    <soil>All</soil>
+    <ph>ALL</ph>
+    <soil>ALL</soil>
     <commonness>Häufig</commonness>
     <poison>Essbar</poison>
     <page>624</page>
@@ -384,7 +384,7 @@
     <woodtype>Softwood,Hardwood</woodtype>
     <trees>Eichen,Buchen</trees>
     <habitat>Wald</habitat>
-    <ph>All</ph>
+    <ph>ALL</ph>
     <soil>Kalk</soil>
     <commonness>Selten</commonness>
     <poison>Essbar</poison>

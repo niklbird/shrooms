@@ -11,19 +11,7 @@ class Mushroom:
     def __init__(self, attributes: dict):
         self.attr = attributes
 
-    def soil_value(self, ph, soils):
-        # Currently unused
-        ph_val = 1
-        if self.attr["ph"] != "All":
-            ph_val = int(self.attr["ph"] == ph)
-        soil_val = 1
-        if self.attr["soil"][0] != "All":
-            soil_val = 0.2
-            for soil in soils:
-                if soil in self.attr["soil"]:
-                    soil_val = 1
-                    break
-        return ph_val * soil_val
+
 
     def time_value(self, cur_month):
         return self.attr["seasonStart"] <= cur_month <= self.attr["seasonEnd"]
@@ -49,31 +37,32 @@ def tree_value(mushroom, trees: dict):
     return min(val / p_all * com_fac, 1)
 
 
-def tree_value_new(mushroom, trees: str):
+def tree_value_new(mushroom, tree_type: str):
     com_fac = 1
-    if trees == "Mischwälder":
-        asfo = 0
     if mushroom.attr['commonness'] == "Selten":
         com_fac = 0.33
     hardwood = 0
-    if trees == "Mischwälder" or trees == "Laubwälder":
+    if tree_type == "Mischwaelder" or tree_type == "Laubwaelder":
         hardwood = 1
     softwood = 0
-    if trees == "Mischwälder" or trees == "Nadelwälder":
+    if tree_type == "Mischwaelder" or tree_type == "Nadelwaelder":
         softwood = 1
     wt = mushroom.attr['woodtype']
     wood_type_factor = min(wt[0] * hardwood + wt[1] * softwood, 1)
     # In the future, this could also consider specific trees
     return wood_type_factor * com_fac
 
-def read_XML(url):
+
+def soil_value(mushroom, soil_type):
+    pass
+
+
+def read_mushroom_XML(url):
     mushrooms = {}
     root = ET.parse(url).getroot()
     for type_tag in root.findall('mushroom'):
         shroom = {};
         for child in type_tag:
-            if "Knollen" in child.text:
-                a = 0
             if child.tag == "woodtype":
                 shroom[child.tag] = (int("Hardwood" in child.text), int("Softwood" in child.text))
             elif child.tag == "trees" or child.tag == "habitat":
@@ -81,7 +70,6 @@ def read_XML(url):
             else:
                 shroom[child.tag] = child.text
         mushrooms[shroom["name"]] = Mushroom(shroom)
-
     return mushrooms
 
 

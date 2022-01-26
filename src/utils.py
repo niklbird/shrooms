@@ -81,7 +81,7 @@ def add_weather(patches):
 def get_month_factors(month):
     # Factor that indicates if mushroom is in season
     ret = {}
-    mushroooms = mushroom.read_XML('../data/mushrooms_databank.xml')
+    mushroooms = mushroom.read_mushroom_XML('../data/mushrooms_databank.xml')
     for s_name in mushroooms.keys():
         ret[s_name] = int(
             int(mushroooms[s_name].attr['seasonStart']) <= month <= int(mushroooms[s_name].attr['seasonEnd']))
@@ -122,27 +122,7 @@ def calc_dynamic_value(patches):
                 date.probabilities[shroom] = min(date.mushrooms[shroom] * dynamic_factor, 1)
 
 
-def calc_static_values(patches):
-    # Calculate weather-independent factor for each point
-    mushrooms = mushroom.read_XML('../data/mushrooms_databank.xml')
-    counter = 0
-    for patch in patches:
-        counter += 1
-        for date in patch.dates:
-            trees = date.trees
-            for shroom in mushrooms.values():
-                date.mushrooms[shroom.attr['name']] = mushroom.tree_value_new(shroom, trees)
 
-
-def preprocess_records(records):
-    # Preprocess records, remove artifcats from Umlaute
-    # This is hacky, better to chose correct encoding but I could not be bothered
-    for i in range(len(records)):
-        record = records[i]
-        text = record[3]
-        record[3] = str(text).replace("Ã¤", "ae").replace("Ã¶", "Oe").replace("Ã¼", "ue").replace("Ã", "Ue").replace("Ã",
-                                                                                                                  "ss")
-        records[i] = record
 
 
 def convert_stacks_to_shapes(stacks):
@@ -323,64 +303,14 @@ def create_super_patch(patches, patches_shape):
     return final_array
 
 
-def reparse():
-    # Recreate everything
-    start = time.time()
+def split_patches(patches, patches_per_file):
+    shape = get_patches_shape(patches)
+    row_amount = int(patches_per_file / shape[0])
+    final_shapes = []
+    for i in range(0, len(patches), row_amount*shape[0]):
+        final_shapes.append(patches[i:min(i+row_amount*shape[0], len(patches))])
+    return final_shapes
 
-    if COMPLETE_REPARSE:
-        tree_shapes, records, lu = parse_in_shape(constants.pwd + "/data/tree_folder/trees", "EPSG:4326")
-        # Changing first and second coordinate as format is inconsistent
-        for i in range(len(tree_shapes)):
-            my_array = np.array(tree_shapes[i].points)
-            temp = np.copy(my_array[:, 0])
-            my_array[:, 0] = my_array[:, 1]
-            my_array[:, 1] = temp
-            tree_shapes[i] = my_array
-        io_utils.dump_to_file(tree_shapes, constants.pwd + "/data/dumps/trees.dump")
-
-    # Read in Shapes and Values of Tree-Data
-    records = create_records(constants.pwd + "/data/tree_folder/trees")
-    tree_shapes = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/trees.dump")
-    # Preprocess Records to remove Encoding-Artifacts
-    preprocess_records(records)
-
-    # Create a Grid of Points
-    patches = create_points(49.942287, 8.484820, 49.654197, 9.076708,
-                            constants.point_dist, constants.points_per_patch_sqrt)
-
-    # patches = create_points(50.04028803094584, 8.49786633110003, 49.679084616354025, 9.210604350500015,
-    #                       constants.point_dist, constants.points_per_patch_sqrt)
-
-    # Create a second Grid of Tree-Points to speed up Calculations later
-    tree_patches = create_points_inner(49.0, 8.0, 50.0, 9.5, 1.0 / get_lat_fac(), 1.0 / get_long_fac(50.0), 1.0)
-
-    if COMPLETE_REPARSE:
-        # Find max. Size of each Tree-Shape
-        tree_shape_distances = find_max_size_shapes(tree_shapes)
-        io_utils.dump_to_file(tree_shape_distances, constants.pwd + "/data/dumps/tree_shape_dist.dump")
-
-    tree_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/tree_shape_dist.dump")
-
-    if COMPLETE_REPARSE:
-        # Preprocess Trees: Fit Tree-Shapes to the Tree-Grid
-        prepro = preprocess_trees(tree_patches, tree_shapes, tree_shape_distances, 1)
-        io_utils.dump_to_file(prepro, constants.pwd + "/data/dumps/prepro.dump")
-
-    prepro = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/prepro.dump")
-
-    # Now find out which Tree-Type (Shape) each created Data-Point has
-    # This requires the most calculation effort -> Speed-Up as much as possible
-    patches = fit_trees_to_patches(patches, tree_shapes, records, tree_patches, prepro)
-
-    # Lastly calculate static probabilities for each Point, depending on the Tree-Types present there
-    calc_static_values(patches)
-
-    end = time.time()
-
-    print("Total Time for Parsing: " + str(end - start))
-    print("Time per Patch: " + str((end - start) / float(len(patches))))
-
-    io_utils.dump_to_file(patches, constants.pwd + "/data/dumps/patches_weather.dump")
 
 
 COMPLETE_REPARSE = True
