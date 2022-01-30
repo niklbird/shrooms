@@ -78,52 +78,6 @@ def add_weather(patches):
         patch_l.weather_data = weather
 
 
-def get_month_factors(month):
-    # Factor that indicates if mushroom is in season
-    ret = {}
-    mushroooms = mushroom.read_mushroom_XML('../data/mushrooms_databank.xml')
-    for s_name in mushroooms.keys():
-        ret[s_name] = int(
-            int(mushroooms[s_name].attr['seasonStart']) <= month <= int(mushroooms[s_name].attr['seasonEnd']))
-    return ret
-
-
-def calc_dynamic_value(patches):
-    # Calculate the actual mushroom probabilities
-    month_factors = get_month_factors(datetime.datetime.today().month)
-
-    for patch in patches:
-        weather = patch.weather_data
-        temperatures = []
-        rains = []
-        humidities = []
-
-        # Look at weather of last 30 days
-        for i in range(30, 1, -1):
-            ts = format_timestamp(datetime.datetime.today() - datetime.timedelta(days=i))
-            if weather[ts] is None or weather[ts]['temperature'] is None:
-                temperatures.append(0)
-                rains.append(0)
-                humidities.append(50)
-                continue
-            temperatures.append(weather[ts]['temperature'])
-            rains.append(weather[ts]['rain'])
-            humidities.append(weather[ts]['humidity'])
-
-        rain_val, temp_val, hum_val = mushroom.environment_factor(rains, temperatures, humidities)
-
-        # Factors may have to be tweaked
-        dynamic_factor = (2 * rain_val + 1 * temp_val + 0.7 * hum_val) / 3.7
-
-        for date in patch.dates:
-            for shroom in date.mushrooms.keys():
-                # Base-Factor, Seasonality, Environment-Factor
-                # min(date.mushrooms[shroom] * month_factors[shroom] * dynamic_factor, 1)
-                date.probabilities[shroom] = min(date.mushrooms[shroom] * dynamic_factor, 1)
-
-
-
-
 
 def convert_stacks_to_shapes(stacks):
     # This function is very specific to this application

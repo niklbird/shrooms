@@ -646,26 +646,7 @@ def matlab_shape_contains_point(shape, point):
     return inside2
 
 
-def calc_static_values(patches):
-    # Calculate weather-independent factor for each point
-    mushrooms = mushroom.read_mushroom_XML('../data/mushrooms_databank.xml')
-    soils = soil.read_soil_XML('../data/soil_databank.xml')
-    counter = 0
-    for patch in patches:
-        counter += 1
-        for date in patch.dates:
-            trees = date.trees
-            soiL_t = date.soil.lower()
-            for shroom in mushrooms.values():
-                #print("-->")
-                #print(date.soil)
-                #print(soil.soil_value(shroom, soils[soiL_t]))
-                tree_val = mushroom.tree_value(shroom, trees)
-                soil_val = soil.soil_value(shroom, soils[soiL_t])
-                if tree_val == 0 or soil_val == 0:
-                    date.mushrooms[shroom.attr['name']] = 0.0
-                else:
-                    date.mushrooms[shroom.attr['name']] = (tree_val + soil_val) / 2
+
 
 
 def preprocess_records(records):

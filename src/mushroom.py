@@ -16,26 +16,6 @@ class Mushroom:
         return self.attr["seasonStart"] <= cur_month <= self.attr["seasonEnd"]
 
 
-def tree_value(mushroom, tree_type: str):
-    com_fac = 1
-    if mushroom.attr['commonness'] == "Selten":
-        com_fac = 0.33
-    hardwood = 0
-    if tree_type == "Mischwaelder" or tree_type == "Laubwaelder":
-        hardwood = 1
-    softwood = 0
-    if tree_type == "Mischwaelder" or tree_type == "Nadelwaelder":
-        softwood = 1
-    wt = mushroom.attr['woodtype']
-
-    wood_type_factor = min(wt[0] * hardwood + wt[1] * softwood, 1)
-
-    wiesen = ["Wiesen und Weiden", "Natuerliches Gruenland", "Heiden und Moorheiden", "Wald-Strauch-Uebergangsstadien"]
-    if "wiese" in mushroom.attr['habitat'].lower() and tree_type in wiesen:
-        wood_type_factor = 1.0
-
-    # In the future, this could also consider specific trees
-    return wood_type_factor * com_fac
 
 
 def read_mushroom_XML(url):
@@ -54,46 +34,7 @@ def read_mushroom_XML(url):
     return mushrooms
 
 
-def temp_deviation(temp, opt_val):
-    if temp < opt_val:
-        return temp / opt_val
-    elif temp > opt_val + 5:
-        return opt_val / temp
-    else:
-        return 1.0
 
-
-def environment_factor(rain, temperature, humidity):
-    # The factorization of the values can be tweeked, it's just a gross estimation
-    # First look at 28 days ago to 14 days ago
-    ra = 0
-    temp = 0
-    hum = 0
-    optimal_temp = 21
-    for j in range(0, 14):
-        # If 10mm is perfect amount, this measures the normalized contribution
-        ra += 0.5 * min(rain[j], 25) / 14
-        temp += 0.3 * temp_deviation(temperature[j], optimal_temp) / 14
-        if humidity[j] is None:
-            humidity[j] = 60
-        hum += humidity[j] / 90 / 14
-    # Emphasize 2-1 week ago
-    for j in range(14, 21):
-        ra += 3 * min(rain[j], 25) / 7
-        temp += 0.75 * temp_deviation(temperature[j], optimal_temp) / 7
-        if humidity[j] is None:
-            humidity[j] = 60
-        hum += humidity[j] / 90 / 7
-    for j in range(21, 28):
-        ra += 0.75 * min(rain[j], 25) / 7
-        temp += 2 * temp_deviation(temperature[j], optimal_temp) / 7
-        if humidity[j] is None:
-            humidity[j] = 60
-        hum += humidity[j] / 90 / 7
-    norm_rain = 0.3 * (0.5 * 14 + 3 * 7 + 7 * 0.75)
-    norm_temp = 3
-    norm_hum = 1.0
-    return min(ra / norm_rain, 3), min(temp / norm_temp, 3), hum / norm_hum
 
 
 def sanity_test():

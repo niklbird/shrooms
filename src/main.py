@@ -2,6 +2,7 @@ import io_utils
 import constants
 import utils
 import reparse_utils
+import factor_calculations
 
 '''
 Main file of the mushroom app. Here is where all the magic happens.
@@ -40,7 +41,7 @@ def main():
     patches_split = io_utils.read_patches_from_folder(constants.pwd + "/data/dumps/patches/")
 
     for patch in patches_split:
-        reparse_utils.calc_static_values(patch)
+        factor_calculations.calc_static_values(patch)
 
     patches = io_utils.flatten_patches(patches_split)
 
@@ -54,7 +55,7 @@ def main():
     io_utils.dump_to_file(patches, constants.pwd + "/data/dumps/patches_weather.dump")
 
     # Calculate the actual mushroom probabilities
-    utils.calc_dynamic_value(patches)
+    factor_calculations.calc_dynamic_value(patches)
 
     # Dump final result to a file for usage in JS
     # io_utils.dump_to_file(patches, constants.pwd + "/data/dumps/patches_probabilities.dump")
