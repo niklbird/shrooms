@@ -58,7 +58,7 @@
     <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood, Softwood</woodtype>
     <trees>All</trees>
-    <habitat>Waldrand, Wiese</habitat>
+    <habitat>Waldrand,Wiese</habitat>
     <ph>All</ph>
     <soil>All</soil>
     <commonness>Häufig</commonness>
@@ -240,7 +240,7 @@
     <seasonEnd>11</seasonEnd>
     <woodtype>Hardwood,Softwood</woodtype>
     <trees>All</trees>
-    <habitat>Wald,Wiesen</habitat>
+    <habitat>Wald,Wiese</habitat>
     <ph>All</ph>
     <soil>All</soil>
     <commonness>Häufig</commonness>

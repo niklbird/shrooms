@@ -657,12 +657,15 @@ def calc_static_values(patches):
             trees = date.trees
             soiL_t = date.soil.lower()
             for shroom in mushrooms.values():
-                print("-->")
-                print(date.soil)
-                print(soil.soil_value(shroom, soils[soiL_t]))
-
-                date.mushrooms[shroom.attr['name']] = mushroom.tree_value_new(shroom, trees) * \
-                                                      soil.soil_value(shroom, soils[soiL_t])
+                #print("-->")
+                #print(date.soil)
+                #print(soil.soil_value(shroom, soils[soiL_t]))
+                tree_val = mushroom.tree_value(shroom, trees)
+                soil_val = soil.soil_value(shroom, soils[soiL_t])
+                if tree_val == 0 or soil_val == 0:
+                    date.mushrooms[shroom.attr['name']] = 0.0
+                else:
+                    date.mushrooms[shroom.attr['name']] = (tree_val + soil_val) / 2
 
 
 def preprocess_records(records):
@@ -767,7 +770,7 @@ def reparse(patches):
     # Now find out which Tree-Type (Shape) each created Data-Point has
     # This requires the most calculation effort -> Speed-Up as much as possible
     patches = fit_values_to_patches(patches, tree_shapes, records, tree_patches, prepro, True)
-    calc_static_values(patches)
+    #calc_static_values(patches)
     end = time.time()
     print("Total Time for Parsing: " + str(end - start))
     print("Time per Patch: " + str((end - start) / float(len(patches))))

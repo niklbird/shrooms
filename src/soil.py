@@ -30,12 +30,14 @@ def soil_value(mushroom, soil):
     if mushroom_ph != "All":
         ph_val = int(mushroom_ph in soil.attr["ph"])*2
     if ph_val == 0:
-        ph_val = 0.2
+        ph_val = 0.5
 
-    soil_val = 0.6
-    if mushroom.attr["soil"][0] != "All" and not mushroom.attr["soil"].lower() in soil.attr["typ"]:
-        soil_val = 0.2
+    soil_val = 1.5
+    sv = mushroom.attr["soil"]
+    a = sv[0]
+    if mushroom.attr["soil"] != "All" and not mushroom.attr["soil"].lower() in soil.attr["typ"]:
+        soil_val = 1
 
     soil_score = float(soil.attr["score"])
-    return ph_val * soil_val * soil_score
+    return ph_val * soil_val #* soil_score
 

@@ -20,6 +20,13 @@ def list_table(cursor, table):
     print('*' * 49)
 
 
+def get_table(cursor, table):
+    ret = []
+    for row in cursor.execute('SELECT * FROM ' + str(table)):
+        ret.append(row)
+    return ret
+
+
 def insert_data_table(cursor, table, rows, values):
     # Remember to properly use delimiters for string arguments
     txt = ''

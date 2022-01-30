@@ -6,38 +6,17 @@ import matplotlib.pyplot as plt
 This class represents one Mushroom Type.
 '''
 
+
 class Mushroom:
 
     def __init__(self, attributes: dict):
         self.attr = attributes
 
-
-
     def time_value(self, cur_month):
         return self.attr["seasonStart"] <= cur_month <= self.attr["seasonEnd"]
 
 
-def tree_value(mushroom, trees: dict):
-    p_all = trees['coverage']
-    com_fac = 1
-    if mushroom.attr['commonness'] == "Selten":
-        com_fac = 0.33
-    if p_all == 0:
-        return 0
-    wood_type_factor = (mushroom.attr['woodtype'][0] * trees['hardwood'] +
-                        mushroom.attr['woodtype'][1] * trees['softwood'])
-    if mushroom.attr["trees"][0] == "ALL":
-        return wood_type_factor / p_all * com_fac
-    val = wood_type_factor / 2
-    # This could be adapted for exclusive trees
-    # Give benefit
-    for tree in trees.keys():
-        if tree in mushroom.attr["trees"]:
-            val += trees[tree]
-    return min(val / p_all * com_fac, 1)
-
-
-def tree_value_new(mushroom, tree_type: str):
+def tree_value(mushroom, tree_type: str):
     com_fac = 1
     if mushroom.attr['commonness'] == "Selten":
         com_fac = 0.33
@@ -48,13 +27,15 @@ def tree_value_new(mushroom, tree_type: str):
     if tree_type == "Mischwaelder" or tree_type == "Nadelwaelder":
         softwood = 1
     wt = mushroom.attr['woodtype']
+
     wood_type_factor = min(wt[0] * hardwood + wt[1] * softwood, 1)
+
+    wiesen = ["Wiesen und Weiden", "Natuerliches Gruenland", "Heiden und Moorheiden", "Wald-Strauch-Uebergangsstadien"]
+    if "wiese" in mushroom.attr['habitat'].lower() and tree_type in wiesen:
+        wood_type_factor = 1.0
+
     # In the future, this could also consider specific trees
     return wood_type_factor * com_fac
-
-
-def soil_value(mushroom, soil_type):
-    pass
 
 
 def read_mushroom_XML(url):
@@ -65,7 +46,7 @@ def read_mushroom_XML(url):
         for child in type_tag:
             if child.tag == "woodtype":
                 shroom[child.tag] = (int("Hardwood" in child.text), int("Softwood" in child.text))
-            elif child.tag == "trees" or child.tag == "habitat":
+            elif child.tag == "trees":
                 shroom[child.tag] = child.text.lower().split(",")
             else:
                 shroom[child.tag] = child.text
@@ -137,8 +118,8 @@ def sanity_test():
                 rowcounter = 0
                 ns = 0
         hum_res = []
-        #for i in range(40, len(val2)):
-            # hum_res.append(humidity_value(val2[i - 30:i], 0))
+        # for i in range(40, len(val2)):
+        # hum_res.append(humidity_value(val2[i - 30:i], 0))
         curMonth = '10'
         res = []
         i = 0
