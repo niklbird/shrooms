@@ -14,7 +14,11 @@ Recover = False
 
 def main():
     if Reparse:
-        patches = reparse_utils.create_points(49.938751, 8.705169, 49.796373, 9.196185,
+        start_cord = [49.938751, 8.705169]
+        end_cord = [49.796373, 9.196185]
+        corners = [start_cord[0], start_cord[1], end_cord[0], end_cord[1]]
+
+        patches = reparse_utils.create_points(start_cord[0], start_cord[1], end_cord[0], end_cord[1],
                                               constants.point_dist, constants.points_per_patch_sqrt)
 
         patches_split = utils.split_patches(patches, 500)
@@ -30,13 +34,8 @@ def main():
             start_point = io_utils.get_dumpamount_in_folder(constants.pwd + "/data/dumps/patches/")
 
         for i in range(start_point, len(patches_split)):
-            parsed = reparse_utils.reparse(patches_split[i])
+            parsed = reparse_utils.reparse(patches_split[i], corners)
             io_utils.dump_to_file(parsed, constants.pwd + file_names[i])
-
-        #parsed_patches = []
-        #io_utils.patches_to_folder(parsed_patches)
-
-        # io_utils.dump_to_file(patches, constants.pwd + "/data/dumps/patches_weather.dump")
 
     patches_split = io_utils.read_patches_from_folder(constants.pwd + "/data/dumps/patches/")
 
