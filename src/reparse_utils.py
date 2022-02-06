@@ -290,9 +290,13 @@ def fit_trees_to_point(tree_shapes_points, point, start_point):
     # Find the shape that actually contains point
     # May not find anything
     # Start at index of last found shape (Speedup)
+    #print(len(tree_shapes_points))
+    fitting = []
     for j in range(start_point, len(tree_shapes_points) + start_point):
         if shape_contains_point(tree_shapes_points[np.mod(j, len(tree_shapes_points))], point):
             return int(np.mod(j, len(tree_shapes_points)))
+    print(len(fitting))
+    return None
 
 
 def fit_trees_to_points(tree_shapes_points, points):
@@ -434,7 +438,7 @@ def try_line_intersections(red_shapes, point, shapes):
     return -1
 
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def find_shape_for_point_backup(shapes, point, min_dist):
     # This is used for times were the shape_contains_point algorithm fails
     # It can be used to reliably find out in which shape the point lies
@@ -444,10 +448,20 @@ def find_shape_for_point_backup(shapes, point, min_dist):
     # First attempt -> Approximate shape as square
     found_shapes = approximate_point_in_shapes(shapes_reduced, point)
 
+    arr = found_shapes[0].tolist()
+
+
+
     if len(found_shapes) == 1:
-        # It worked
         return extend_back(shapes, found_shapes[0])
 
+    arr2 = found_shapes[1].tolist()
+    f = open("tmpfile1.txt", "w")
+    f.write(str(arr))
+    f.close()
+    f = open("tmpfile2.txt", "w")
+    f.write(str(arr2))
+    f.close()
     ind = try_shifted_point(shapes_reduced, point, min_dist, shapes)
     if ind != -1:
         # It worked
@@ -646,9 +660,6 @@ def matlab_shape_contains_point(shape, point):
     return inside2
 
 
-
-
-
 def preprocess_records(records):
     # Preprocess records, remove artifcats from Umlaute
     # This is hacky, better to chose correct encoding but I could not be bothered
@@ -704,18 +715,31 @@ def reparse(patches):
     # Recreate everything
     start = time.time()
 
-    COMPLETE_REPARSE = False
+    COMPLETE_REPARSE = True
 
     if COMPLETE_REPARSE:
         # Ensure that shape is in ESPG
         tree_shapes, records, lu = parse_in_shape(constants.pwd + "/data/tree_folder/trees", "EPSG:4326")
         # Changing first and second coordinate as format is inconsistent
         for i in range(len(tree_shapes)):
+            #print(tree_shapes[i].contains([49.0, 8.0]))
+
+            parts = tree_shapes[i].parts
             my_array = np.array(tree_shapes[i].points)
             temp = np.copy(my_array[:, 0])
             my_array[:, 0] = my_array[:, 1]
             my_array[:, 1] = temp
-            tree_shapes[i] = my_array
+
+            if len(parts) > 1:
+                tree_shapes[i] = [my_array]
+                #my_array = np.array(tree_shapes[i].points)
+                #lala = my_array.tolist()
+                #f = open("tmpf1.txt", "w")
+                #f.write(str(lala))
+                #f.close()
+                #print("aaa")
+            else:
+                tree_shapes[i] = [my_array]
         io_utils.dump_to_file(tree_shapes, constants.pwd + "/data/dumps/trees.dump")
 
     # Read in Shapes and Values of Tree-Data

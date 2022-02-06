@@ -8,7 +8,7 @@ import factor_calculations
 Main file of the mushroom app. Here is where all the magic happens.
 '''
 
-Reparse = False
+Reparse = True
 
 Recover = False
 
