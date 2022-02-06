@@ -9,6 +9,9 @@ def tree_value(mushroom, tree_type: str):
     if mushroom.attr['commonness'] == "Selten":
         com_fac = 0.33
     hardwood = 0
+    if str(type(tree_type)) != "<class 'numpy.str_'>":
+        a = 0
+    #print(type(tree_type))
     if tree_type == "Mischwaelder" or tree_type == "Laubwaelder":
         hardwood = 1
     softwood = 0
@@ -149,5 +152,4 @@ def environment_factor(rain, temperature, humidity):
     norm_rain = 0.5 * 14 + 3 * 7 + 7 * 0.75
     norm_temp = 3
     norm_hum = 2.0
-    print(hum / norm_hum)
     return min(ra / norm_rain / optimal_rain, 3), min(temp / norm_temp, 3), hum / norm_hum

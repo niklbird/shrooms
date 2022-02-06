@@ -322,7 +322,7 @@ def fit_trees_to_point(tree_shapes_points_arr, point, start_point):
                 if not inner_contains:
                     return int(np.mod(j, len(tree_shapes_points_arr)))
     print("ERROR, DID NOT FIND ANY SHAPE THAT CONTAINS THIS POINT")
-    return None
+    return start_point
 
 
 def fit_trees_to_points(tree_shapes_points, points):
@@ -579,10 +579,10 @@ def reparse(patches, corners):
     # Recreate everything
     start = time.time()
 
-    start_cord = [math.floor(min(corners[0], corners[2])), math.floor(min(corners[1], corners[3]))]
-    end_cord = [math.ceil(max(corners[0], corners[2])), math.ceil(max(corners[1], corners[3]))]
+    start_cord = [math.floor(min(corners[0], corners[2])) - 0.5, math.floor(min(corners[1], corners[3])) - 0.5]
+    end_cord = [math.ceil(max(corners[0], corners[2])) + 0.5, math.ceil(max(corners[1], corners[3])) + 0.5]
 
-    COMPLETE_REPARSE = True
+    COMPLETE_REPARSE = False
 
     if COMPLETE_REPARSE:
         # Ensure that shape is in ESPG

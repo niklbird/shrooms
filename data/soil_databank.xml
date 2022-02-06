@@ -81,6 +81,14 @@
     <typ>Kalk,Ton,Schluff</typ>
   </soil>
     <soil>
+    <name lang="de">Tschernosem aus Loess und loessaehnlichen Schluffablagerungen</name>
+    <ph>Sauer,Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>1.0</score>
+    <water>Hoch</water>
+    <typ>Loess,Schluff</typ>
+  </soil>
+    <soil>
     <name lang="de">Auenboden / Gley aus sandigen bis lehmigen Flusssedimenten</name>
     <ph>Sauer,Neutral</ph>
     <nitrat>Hoch</nitrat>
@@ -111,6 +119,14 @@
     <score>0.6</score>
     <water>Neutral</water>
     <typ>Kalk,Lehm,Sand</typ>
+  </soil>
+   <soil>
+    <name lang="de">Rendzina / braunerde-rendzina / pararendzina aus hangschutt ueber kalk-, mergel- und dolomitgesteinen im wechsel mit flacher braunerde ueber terra fusca / terra fusca-parabraunerde aus schluffig-tonigen umlagerungsprodukten der kalksteinverwitterung</name>
+    <ph>Neutral,Basisch</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Neutral</water>
+    <typ>Kalk,Mergel</typ>
   </soil>
     <soil>
     <name lang="de">Pararendzina aus Loess im Wechsel mit Rendzina aus Mergel- und Kalkstein</name>
@@ -159,6 +175,14 @@
     <score>0.4</score>
     <water>Neutral</water>
     <typ>Sand,Ton,Schiefer</typ>
+  </soil>
+  <soil>
+    <name lang="de">Braunerde / podsol-braunerde aus Schluff-, Sand- und Tonsteinen</name>
+    <ph>Neutral</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.4</score>
+    <water>Neutral</water>
+    <typ>Sand,Schluff,Ton</typ>
   </soil>
    <soil>
     <name lang="de">Braunerde aus sauren magmatischen und metamorphen Gesteinen</name>

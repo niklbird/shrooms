@@ -3,25 +3,28 @@ import constants
 import utils
 import reparse_utils
 import factor_calculations
+import time
+
 
 '''
 Main file of the mushroom app. Here is where all the magic happens.
 '''
 
-Reparse = True
+Reparse = False
 
 Recover = False
 
 def main():
+    start = time.time()
     if Reparse:
-        start_cord = [49.938751, 8.705169]
-        end_cord = [49.796373, 9.196185]
+        start_cord = [50.008600, 8.159928]
+        end_cord = [49.678271, 9.082780]
         corners = [start_cord[0], start_cord[1], end_cord[0], end_cord[1]]
 
         patches = reparse_utils.create_points(start_cord[0], start_cord[1], end_cord[0], end_cord[1],
                                               constants.point_dist, constants.points_per_patch_sqrt)
 
-        patches_split = utils.split_patches(patches, 500)
+        patches_split = utils.split_patches(patches, 1000)
 
         file_names = io_utils.generate_file_names(len(patches_split))
 
@@ -59,6 +62,8 @@ def main():
     # Dump final result to a file for usage in JS
     # io_utils.dump_to_file(patches, constants.pwd + "/data/dumps/patches_probabilities.dump")
     io_utils.write_to_GEOJSON(patches)
+    end = time.time()
+    print("Total Time for this run: " + str(end - start))
 
 
 if __name__ == "__main__":
