@@ -172,6 +172,7 @@ def calc_averages(shape_points):
     return res
 
 
+@jit(nopython=True)
 def find_closest_point(point, points):
     # Currently not used
     arr = np.array([abs(get_distance(point[0], point[1], points[i][0], points[i][1])) for i in range(len(points))])
@@ -302,15 +303,18 @@ def approximate_point_in_shapes(shapes, point):
     return found_shapes
 
 
-def fit_trees_to_point(tree_shapes_points_arr, point, start_point):
+def fit_trees_to_point(tree_shapes_points_arr, point, start_point: int):
     # Find the shape that actually contains point
     # May not find anything
     # Start at index of last found shape (Speedup)
-    for j in range(start_point, len(tree_shapes_points_arr) + start_point):
-        arr = tree_shapes_points_arr[np.mod(j, len(tree_shapes_points_arr))]
+    end_point = len(tree_shapes_points_arr) + start_point
+    for j in range(start_point, end_point):
+        ind = np.mod(j, len(tree_shapes_points_arr))
+        arr = tree_shapes_points_arr[ind]
+
         if shape_contains_point(arr[0], point):
             if len(arr) == 1:
-                return int(np.mod(j, len(tree_shapes_points_arr)))
+                return ind
             else:
                 # Check that none of the inner (excluded shapes) contain the point
                 # As this means that the shape is not in the shape after all
@@ -320,22 +324,22 @@ def fit_trees_to_point(tree_shapes_points_arr, point, start_point):
                         inner_contains = True
                         break
                 if not inner_contains:
-                    return int(np.mod(j, len(tree_shapes_points_arr)))
+                    return ind
+
     print("ERROR, DID NOT FIND ANY SHAPE THAT CONTAINS THIS POINT")
     return start_point
 
 
+#@jit(nopython=True)
 def fit_trees_to_points(tree_shapes_points, points):
     # Find the correct shape for each point
     # If no shape is found -> None
     ret = []
-    tree_shapes_points_np = np.array(tree_shapes_points)
+    tree_shapes_points_np = tree_shapes_points
     re = 0
     for i in range(len(points)):
-        re = fit_trees_to_point(tree_shapes_points_np, points[i], re)
+        re = fit_trees_to_point(tree_shapes_points, points[i], int(re))
         ret.append(re)
-        if re is None:
-            re = 0
     return ret
 
 
@@ -535,7 +539,7 @@ def convert_shapes_to_format(shapes):
     return shapes
 
 
-def soil_parse(patches, start_cord, end_cord, complete_reparse):
+def soil_parse(patches, start_cord, end_cord, complete_reparse, first_reparse):
     # Parse in Soil Data
     if complete_reparse:
         soil_shapes, records, lu = parse_in_shape(constants.pwd + "/data/soil_folder/Bodenarten_new_new", "EPSG:4326")
@@ -557,14 +561,18 @@ def soil_parse(patches, start_cord, end_cord, complete_reparse):
 
     soil_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/soil_shape_dist.dump")
 
-    if complete_reparse:
+    #if complete_reparse:
+    if first_reparse:
         prepro = preprocess_values(soil_patches, soil_shapes, soil_shape_distances, 1.0)
         io_utils.dump_to_file(prepro, constants.pwd + "/data/dumps/soil_prepro.dump")
 
     prepro = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/soil_prepro.dump")
 
     print("Started fitting soils")
+    before = time.time()
     patches = fit_values_to_patches(patches, soil_shapes, records, soil_patches, prepro, False)
+    end = time.time()
+    print("Time: " + str(end - before))
     return patches
 
 
@@ -575,12 +583,15 @@ def fill_patches_with_empy_dates(patches):
     return patches
 
 
-def reparse(patches, corners):
+def reparse(patches, corners, first_reparse):
     # Recreate everything
     start = time.time()
 
     start_cord = [math.floor(min(corners[0], corners[2])) - 0.5, math.floor(min(corners[1], corners[3])) - 0.5]
     end_cord = [math.ceil(max(corners[0], corners[2])) + 0.5, math.ceil(max(corners[1], corners[3])) + 0.5]
+
+    #start_cord = [47.098687, 6.010150]
+    #end_cord = [55.166234, 14.488775]
 
     COMPLETE_REPARSE = False
 
@@ -600,7 +611,7 @@ def reparse(patches, corners):
 
     fill_patches_with_empy_dates(patches)
 
-    patches = soil_parse(patches, start_cord, end_cord, COMPLETE_REPARSE)
+    patches = soil_parse(patches, start_cord, end_cord, COMPLETE_REPARSE, first_reparse)
 
     # Create a second Grid of Tree-Points to speed up Calculations later
     tree_patches = create_points_inner(start_cord[0], start_cord[1], end_cord[0], end_cord[1], 1.0 / get_lat_fac(), 1.0 / get_long_fac(end_cord[0]), 1.0)
@@ -612,8 +623,9 @@ def reparse(patches, corners):
 
     tree_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/tree_shape_dist.dump")
 
-    if COMPLETE_REPARSE:
+    #if COMPLETE_REPARSE:
         # Preprocess Trees: Fit Tree-Shapes to the Tree-Grid
+    if first_reparse:
         prepro = preprocess_values(tree_patches, tree_shapes, tree_shape_distances, 1)
         io_utils.dump_to_file(prepro, constants.pwd + "/data/dumps/prepro_trees.dump")
 

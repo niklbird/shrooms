@@ -17,14 +17,14 @@ Recover = False
 def main():
     start = time.time()
     if Reparse:
-        start_cord = [50.008600, 8.159928]
-        end_cord = [49.678271, 9.082780]
+        start_cord = [50.327834, 7.578448]
+        end_cord = [49.598154, 9.553240]
         corners = [start_cord[0], start_cord[1], end_cord[0], end_cord[1]]
 
         patches = reparse_utils.create_points(start_cord[0], start_cord[1], end_cord[0], end_cord[1],
                                               constants.point_dist, constants.points_per_patch_sqrt)
 
-        patches_split = utils.split_patches(patches, 1000)
+        patches_split = utils.split_patches(patches, 2000)
 
         file_names = io_utils.generate_file_names(len(patches_split))
 
@@ -35,10 +35,11 @@ def main():
 
         if Recover:
             start_point = io_utils.get_dumpamount_in_folder(constants.pwd + "/data/dumps/patches/")
-
+        first_reparse = True
         for i in range(start_point, len(patches_split)):
-            parsed = reparse_utils.reparse(patches_split[i], corners)
+            parsed = reparse_utils.reparse(patches_split[i], corners, first_reparse)
             io_utils.dump_to_file(parsed, constants.pwd + file_names[i])
+            first_reparse = False
 
     patches_split = io_utils.read_patches_from_folder(constants.pwd + "/data/dumps/patches/")
 
