@@ -282,20 +282,34 @@ def find_max_size_shapes(shapes):
     #
     dist_arr = []
     for i in range(len(shapes)):
-        dist_arr.append(find_max_size_shape(shapes[i]))
+        dist_arr.append(find_max_size_shape(shapes[i][0]))
     return dist_arr
 
 
-def fit_trees_to_point(tree_shapes_points, point, start_point):
+def fit_trees_to_point(tree_shapes_points_arr, point, start_point):
     # Find the shape that actually contains point
     # May not find anything
     # Start at index of last found shape (Speedup)
-    #print(len(tree_shapes_points))
-    fitting = []
-    for j in range(start_point, len(tree_shapes_points) + start_point):
-        if shape_contains_point(tree_shapes_points[np.mod(j, len(tree_shapes_points))], point):
-            return int(np.mod(j, len(tree_shapes_points)))
-    print(len(fitting))
+    for j in range(start_point, len(tree_shapes_points_arr) + start_point):
+        arr = tree_shapes_points_arr[np.mod(j, len(tree_shapes_points_arr))]
+        if shape_contains_point(arr[0], point):
+            if len(arr) == 1:
+                return int(np.mod(j, len(tree_shapes_points_arr)))
+            else:
+                # Check that none of the inner (excluded shapes) contain the point
+                # As this means that the shape is not in the shape after all
+                inner_contains = False
+                for i in range(1,len(arr)):
+                    if shape_contains_point(arr[i], point):
+                        inner_contains = True
+                        break
+                if not inner_contains:
+                    return int(np.mod(j, len(tree_shapes_points_arr)))
+        #if len(arr) == 1 and shape_contains_point(arr[0], point):
+        #    return int(np.mod(j, len(tree_shapes_points_arr)))
+        #for tree_shapes_points in tree_shapes_points_arr[np.mod(j, len(tree_shapes_points_arr))]:
+        #    if shape_contains_point(tree_shapes_points, point):
+         #       return int(np.mod(j, len(tree_shapes_points_arr)))
     return None
 
 
@@ -366,7 +380,7 @@ def remove_doubles_array(shapes):
                 new_val = False
                 break
         if new_val:
-            shapes_reduced.append(shapes[i])
+            shapes_reduced.append(shapes[i][0])
 
     return shapes_reduced
 
@@ -490,7 +504,7 @@ def shapes_from_dist(shapes, points):
     # Look which shape has the closest point to this point
     # This should be the shape the point is in (or the one directly neighboring)
     for i in range(len(shapes)):
-        shape = shapes[i]
+        shape = shapes[i][0]
         m = np.min(np.abs(get_distance_arr(shape[:, 0], shape[:, 1], points[0], points[1])))
         if np.abs(dist - m) < 0.0001:
             possible_shapes.append(shape)
@@ -529,6 +543,7 @@ def create_dates(patch, fitting_shapes, possible_records, possible_shapes, trees
 
         # If the contains algorithm failed, no fitting tree shape was found
         if fitting_shapes[j] is None:
+            print("Was executed")
             if cur_recalc:
                 value, fitted_in = no_fitting_shape(np.array(patch.points[j]), possible_shapes, possible_records)
                 patch.dates[j].set_env(value, trees_bool)
@@ -572,7 +587,7 @@ def create_dates(patch, fitting_shapes, possible_records, possible_shapes, trees
 
 def no_fitting_shape(points, possible_shapes, possible_records):
     # If no shape was found in the first step -> Invest in heavier calculation to find correct shape
-
+    # This is now deprecated as I fixed the initial contains algorithm
     possible_shapes, pos_shapes_indices, dist = shapes_from_dist(possible_shapes, points)
 
     best_tmp = find_shape_for_point_backup(possible_shapes, points, dist)
@@ -609,7 +624,7 @@ def preprocess_values(points, value_shapes, value_shape_distances, dist):
     dist_half = dist / np.sqrt(2)
     points = np.array(points)
     for i in range(len(value_shapes)):
-        shape = value_shapes[i]
+        shape = value_shapes[i][0]
         indices = np.where((get_distance_arr(points[:, 0], points[:, 1], shape[0][0], shape[0][1]) -
                             value_shape_distances[i]) < dist_half * 2)[0]
         for index in indices:
@@ -684,11 +699,18 @@ def soil_parse(patches):
     soil_shapes, records, lu = parse_in_shape(constants.pwd + "/data/soil_folder/Bodenarten_new_new", "EPSG:4326")
     # Changing first and second coordinate as format is inconsistent
     for i in range(len(soil_shapes)):
+        parts = soil_shapes[i].parts
         my_array = np.array(soil_shapes[i].points)
         temp = np.copy(my_array[:, 0])
         my_array[:, 0] = my_array[:, 1]
         my_array[:, 1] = temp
-        soil_shapes[i] = my_array
+        if len(parts) > 1:
+            arr = []
+            for j in range(len(parts) - 1):
+                arr.append(my_array[parts[j]: parts[j + 1]])
+            soil_shapes[i] = arr
+        else:
+            soil_shapes[i] = [my_array]
     io_utils.dump_to_file(soil_shapes, constants.pwd + "/data/dumps/soils.dump")
     soil_shapes = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/soils.dump")
     # Preprocess Records to remove Encoding-Artifacts
@@ -722,22 +744,19 @@ def reparse(patches):
         tree_shapes, records, lu = parse_in_shape(constants.pwd + "/data/tree_folder/trees", "EPSG:4326")
         # Changing first and second coordinate as format is inconsistent
         for i in range(len(tree_shapes)):
-            #print(tree_shapes[i].contains([49.0, 8.0]))
-
             parts = tree_shapes[i].parts
             my_array = np.array(tree_shapes[i].points)
             temp = np.copy(my_array[:, 0])
             my_array[:, 0] = my_array[:, 1]
             my_array[:, 1] = temp
-
+            # The shapes are divided into parts
+            # The first part is the large defintiion of the shape
+            # All other parts describe which inner parts of the shape are excluded from it
             if len(parts) > 1:
-                tree_shapes[i] = [my_array]
-                #my_array = np.array(tree_shapes[i].points)
-                #lala = my_array.tolist()
-                #f = open("tmpf1.txt", "w")
-                #f.write(str(lala))
-                #f.close()
-                #print("aaa")
+                arr = []
+                for j in range(len(parts) - 1):
+                    arr.append(my_array[parts[j]: parts[j + 1]])
+                tree_shapes[i] = arr
             else:
                 tree_shapes[i] = [my_array]
         io_utils.dump_to_file(tree_shapes, constants.pwd + "/data/dumps/trees.dump")
@@ -751,9 +770,6 @@ def reparse(patches):
     fill_patches_with_empy_dates(patches)
 
     soil_parse(patches)
-
-    # patches = create_points(50.04028803094584, 8.49786633110003, 49.679084616354025, 9.210604350500015,
-    #                       constants.point_dist, constants.points_per_patch_sqrt)
 
     # Create a second Grid of Tree-Points to speed up Calculations later
     tree_patches = create_points_inner(49.0, 8.0, 50.0, 9.5, 1.0 / get_lat_fac(), 1.0 / get_long_fac(50.0), 1.0)

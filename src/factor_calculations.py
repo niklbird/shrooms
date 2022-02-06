@@ -87,7 +87,7 @@ def calc_dynamic_value(patches):
         # Look at weather of last 30 days
         for i in range(30, 1, -1):
             ts = utils.format_timestamp(datetime.datetime.today() - datetime.timedelta(days=i))
-            if weather[ts] is None or weather[ts]['temperature'] is None:
+            if weather[ts] is None or weather[ts]['temperature'] is None or weather[ts]['rain'] is None:
                 temperatures.append(0)
                 rains.append(0)
                 humidities.append(50)
