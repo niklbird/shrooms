@@ -122,55 +122,50 @@ def combine_rows(rows, column_amount):
         row = rows[i][0]
         next_row = rows[i + 1][0]
         j = k = 0
-        while j < len(row) and k < len(next_row):
-            executions += 1
-            # If this shape was already used -> Cant just simply add, create extension point to later combine these
-            extension_point = base_counter + len(row) + k in used_shapes
-            # If this shape and the shape have same probability -> Look if can be combined
-            val1 = rows[i][1][j]
-            val2 = rows[i + 1][1][k]
-            dif = abs(val2 - val1)
-            innn = base_counter + len(row) + k
-            if dif < 0.001:
-                shape = row[j]
-                point_0 = shape[0]
-                point_1 = shape[1]
+        for k in range(len(next_row)):
+            for j in range(len(row)):
+                executions += 1
+                # If this shape was already used -> Cant just simply add, create extension point to later combine these
+                extension_point = base_counter + len(row) + k in used_shapes
+                # If this shape and the shape have same probability -> Look if can be combined
+                val1 = rows[i][1][j]
+                val2 = rows[i + 1][1][k]
+                dif = abs(val2 - val1)
+                innn = base_counter + len(row) + k
+                if dif < 0.001:
+                    shape = row[j]
+                    point_0 = shape[0]
+                    point_1 = shape[1]
 
-                shape_new = next_row[k]
-                point_2 = shape_new[2]
-                point_3 = shape_new[3]
+                    shape_new = next_row[k]
+                    point_2 = shape_new[2]
+                    point_3 = shape_new[3]
 
-                if point_1[1] <= point_3[1] <= point_0[1] or point_1[1] <= point_2[1] <= point_0[1]:
-                    # The shapes touch -> Combine to larger shape
-                    if base_counter + len(row) + k in used_shapes:
-                        touch_point = [point_2, point_3]
-                        shape_points = [shape[1], shape[2], shape[3], shape[0]]
-                        extension_points.append([touch_point, shape_points, stack_dictionary[base_counter + len(row) + k]])
-                        used_shapes.append(base_counter + j)
-
-                    else:
-                        if int(base_counter + j) in stack_dictionary:
-                            stack_index = stack_dictionary[base_counter + j]
-                            stacks[stack_index].append([shape_new, val1])
-
+                    if point_1[1] <= point_3[1] <= point_0[1] or point_1[1] <= point_2[1] <= point_0[1]:
+                        # The shapes touch -> Combine to larger shape
+                        if base_counter + len(row) + k in used_shapes:
+                            continue
+                            touch_point = [point_2, point_3]
+                            shape_points = [shape[1], shape[2], shape[3], shape[0]]
+                            extension_points.append([touch_point, shape_points, stack_dictionary[base_counter + len(row) + k]])
+                            #used_shapes.append(base_counter + j)
+                            print("Hallo")
                         else:
-                            # If not yet in the dictionary -> Beginning of new shape
-                            stack_index = len(stacks)
-                            stacks.append([[shape, val1], [shape_new, val2]])
+                            if int(base_counter + j) in stack_dictionary:
+                                stack_index = stack_dictionary[base_counter + j]
+                                stacks[stack_index].append([shape_new, val1])
+
+                            else:
+                                # If not yet in the dictionary -> Beginning of new shape
+                                stack_index = len(stacks)
+                                stacks.append([[shape, val1], [shape_new, val2]])
 
 
-                        # Store to which larger shape this shape now belongs
-                        stack_dictionary[base_counter + len(row) + k] = stack_index
+                            # Store to which larger shape this shape now belongs
+                            stack_dictionary[base_counter + len(row) + k] = stack_index
 
-                        used_shapes.append(base_counter + j)
-                        used_shapes.append(base_counter + len(row) + k)
-
-                if (point_0[1] > point_2[1] or j == len(next_row) - 1) and k < len(row) - 1:
-                    k += 1
-                else:
-                    j += 1
-            elif j < len(row):
-                j += 1
+                            used_shapes.append(base_counter + j)
+                            used_shapes.append(base_counter + len(row) + k)
         base_counter += len(row)
     shapes = convert_stacks_to_shapes(stacks)
     print(len(extension_points))
