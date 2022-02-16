@@ -107,6 +107,8 @@ def combine_extension(shapes, extension_points):
 
     final_shapes = []
 
+    happened_counter = 0
+
     for extension in extension_points:
         touch_point = extension[0]
         touch_point_new = extension[1]
@@ -137,7 +139,7 @@ def combine_extension(shapes, extension_points):
             if break_outer:
                 # I think this means that this combination was already implictly done, not sure though
                 # TODO Check this
-                print("Happend")
+                happened_counter += 1
                 continue
             shp_new = final_shapes[index_new]
             used[index_new] = len(final_shapes)
@@ -169,7 +171,11 @@ def combine_extension(shapes, extension_points):
         for i in range(touch_point_1 + 1):
             final_shape.append(shape[i])
 
-        for i in range(touch_point_new_1, touch_point_new_1 + len(shape_new)):
+        if touch_point_new_2 < touch_point_new_1:
+            print("y")
+            touch_point_new_2 += len(shape_new)
+
+        for i in range(touch_point_new_1, touch_point_new_1 + len(shape_new) + 1):
             final_shape.append(shape_new[i % len(shape_new)])
 
         for i in range(touch_point_1 + 1, len(shape)):
@@ -181,10 +187,15 @@ def combine_extension(shapes, extension_points):
         if len(shape) == 2:
             f_shapes.append(shape)
 
+    unused_counter = 0
     for i in range(len(shapes)):
         if i not in start_points:
             f_shapes.append(shapes[i])
+            unused_counter += 1
             print("unused why?")
+
+    print(happened_counter)
+    print(unused_counter)
     return f_shapes
 
 
@@ -228,7 +239,9 @@ def combine_rows(rows, column_amount):
                     point_2 = shape_new[2]
                     point_3 = shape_new[3]
 
-                    if point_1[1] <= point_3[1] <= point_0[1] or point_1[1] <= point_2[1] <= point_0[1]:
+                    if point_1[1] <= point_3[1] <= point_0[1] or point_1[1] <= point_2[1] <= point_0[1]\
+                            or point_2[1] <= point_1[1] <= point_0[1] <= point_3[1] or\
+                            point_1[1] <= point_2[1] <= point_3[1] <= point_0[1]:
                         # The shapes touch -> Combine to larger shape
                         if base_counter + len(row) + k in used_shapes or base_counter + j in used_shapes:
                             if base_counter + len(row) + k in stack_dictionary:
@@ -295,12 +308,13 @@ def shape_reduction(arr, dist_x, dist_y, row_amount, column_amount):
             v = c * l + r
 
             point = arr[v][0]
+
             # Check if array carries distance-value
             if len(arr[v]) == 3:
                 dist_y = arr[v][2]
             shape = []
             # First Element in Row is starting point
-            if r == 0 or row_tmp[r - 1][1] != arr[v][1]:
+            if r == 0 or row_tmp[r - 1][1] - arr[v][1]:
                 # For graphic representation, the point needs to be translated into a rectangle
                 shape.append([point[0] + dist_y, point[1] + dist_x])
                 shape.append([point[0] + dist_y, point[1] - dist_x])
