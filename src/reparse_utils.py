@@ -271,6 +271,7 @@ def cut_patches(patches, shape):
 
 def find_max_size_shape(shape):
     # Approximate distance between the two most distant points in shape
+    shape = np.array(shape)
     middle_point = shape[0]  # This is only an approximation, but will always over-estimate distance in the end
     dist_arr = np.array(np.abs(get_distance_arr(shape[:, 0], shape[:, 1], middle_point[0], middle_point[1])))
     return 2 * np.max(dist_arr)
@@ -326,7 +327,6 @@ def fit_trees_to_point(tree_shapes_points_arr, point, start_point: int):
                 if not inner_contains:
                     return ind
 
-    print("ERROR, DID NOT FIND ANY SHAPE THAT CONTAINS THIS POINT")
     return start_point
 
 

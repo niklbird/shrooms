@@ -14,17 +14,24 @@ Reparse = False
 
 Recover = False
 
+Recalc = False
+
 def main():
     start = time.time()
     if Reparse:
-        start_cord = [50.327834, 7.578448]
-        end_cord = [49.598154, 9.553240]
+        start_cord = [50.167119, 8.156685]
+        end_cord = [49.540255, 9.422859]
+
+        patches_per_run = 1000
+
         corners = [start_cord[0], start_cord[1], end_cord[0], end_cord[1]]
 
+        print("Creating Points")
         patches = reparse_utils.create_points(start_cord[0], start_cord[1], end_cord[0], end_cord[1],
                                               constants.point_dist, constants.points_per_patch_sqrt)
 
-        patches_split = utils.split_patches(patches, 2000)
+        print("Splitting Patches")
+        patches_split = utils.split_patches(patches, patches_per_run)
 
         file_names = io_utils.generate_file_names(len(patches_split))
 
@@ -36,32 +43,38 @@ def main():
         if Recover:
             start_point = io_utils.get_dumpamount_in_folder(constants.pwd + "/data/dumps/patches/")
         first_reparse = True
+        print("Staring Parse of " + str(len(patches_split)) + " Iterations with " + str(patches_per_run) + " Patches each")
         for i in range(start_point, len(patches_split)):
             parsed = reparse_utils.reparse(patches_split[i], corners, first_reparse)
             io_utils.dump_to_file(parsed, constants.pwd + file_names[i])
             first_reparse = False
+            print(f"Finished parsing patch {i} of {len(patches_split)}")
 
     patches_split = io_utils.read_patches_from_folder(constants.pwd + "/data/dumps/patches/")
 
-    for patch in patches_split:
-        factor_calculations.calc_static_values(patch)
+    if Recalc:
+        print("Calculating static Values")
+        for patch in patches_split:
+            factor_calculations.calc_static_values(patch)
 
+    print("Flattening Patches")
     patches = io_utils.flatten_patches(patches_split)
 
     # Read in pre-processed data points with tree-data
     # patches = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/patches_weather.dump")
 
     # Query weather-data from DWD
+    print("Adding Weather to Patches")
     utils.add_weather(patches)
 
     # Dump file with current weather data
     io_utils.dump_to_file(patches, constants.pwd + "/data/dumps/patches_weather.dump")
 
+    print("Calculating dynamic Values")
     # Calculate the actual mushroom probabilities
     factor_calculations.calc_dynamic_value(patches)
 
     # Dump final result to a file for usage in JS
-    # io_utils.dump_to_file(patches, constants.pwd + "/data/dumps/patches_probabilities.dump")
     io_utils.write_to_GEOJSON(patches)
     end = time.time()
     print("Total Time for this run: " + str(end - start))

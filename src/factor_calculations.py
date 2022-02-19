@@ -71,7 +71,11 @@ def calc_static_values(patches):
                 #print(date.soil)
                 #print(soil.soil_value(shroom, soils[soiL_t]))
                 tree_val = tree_value(shroom, trees)
-                soil_val = soil_value(shroom, soils[soiL_t])
+                if soiL_t not in soils:
+                    print(soiL_t)
+                    soil_val = 0.5
+                else:
+                    soil_val = soil_value(shroom, soils[soiL_t])
                 if tree_val == 0 or soil_val == 0:
                     date.mushrooms[shroom.attr['name']] = 0.0
                 else:
@@ -109,6 +113,7 @@ def calc_dynamic_value(patches):
                 # Base-Factor, Seasonality, Environment-Factor
                 # min(date.mushrooms[shroom] * month_factors[shroom] * dynamic_factor, 1)
                 date.probabilities[shroom] = min(date.mushrooms[shroom] * dynamic_factor, 1)
+                #date.probabilities[shroom] = min(date.mushrooms[shroom] * dynamic_factor * 100, 1)
 
 
 def temp_deviation(temp, opt_val):
