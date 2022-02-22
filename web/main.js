@@ -9,14 +9,14 @@ import VectorSource from './node_modules/ol/source/Vector';
 import {Fill, Style} from './node_modules/ol/style';
 
 
-const source4 = new VectorSource({
+const source = new VectorSource({
   title: 'added Layer',
   url: './data.txt',
   format: new GeoJSON(),
 });
 
-const layer2 = new VectorLayer({
-  source: source4,
+const layer = new VectorLayer({
+  source: source,
   style: function (feature) {
     return new Style({
       fill: new Fill({
@@ -26,13 +26,36 @@ const layer2 = new VectorLayer({
   },
 });
 
+
+const source_grainy = new VectorSource({
+  title: 'added Layer',
+  url: './data_grainy.txt',
+  format: new GeoJSON(),
+});
+ 
+const layer_grainy = new VectorLayer({
+  source: source_grainy,
+  style: function (feature) {
+    return new Style({
+      fill: new Fill({
+        color: feature.getProperties().color,
+      }),
+    });
+  },
+});
+
+layer.setMinZoom(10.5);
+
+layer_grainy.setMaxZoom(10.5);
+
+
 const map = new Map({
   target: 'map',
   layers: [
     new TileLayer({
       source: new OSM()
     }),
-    layer2,
+    layer,layer_grainy,
   ],
   view: new View({
     center: [1118760.88, 6636047.68],

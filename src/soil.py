@@ -24,18 +24,5 @@ def read_soil_XML(uri):
     return soils
 
 
-def soil_value(mushroom, soil):
-    mushroom_ph = mushroom.attr['ph'].lower()
-    ph_val = 2.0
-    if mushroom_ph != "All":
-        ph_val = int(mushroom_ph in soil.attr["ph"])*2
-    if ph_val == 0:
-        ph_val = 0.2
 
-    soil_val = 0.6
-    if mushroom.attr["soil"][0] != "All" and not mushroom.attr["soil"].lower() in soil.attr["typ"]:
-        soil_val = 0.2
-
-    soil_score = float(soil.attr["score"])
-    return ph_val * soil_val * soil_score
 

@@ -78,53 +78,6 @@ def add_weather(patches):
         patch_l.weather_data = weather
 
 
-def get_month_factors(month):
-    # Factor that indicates if mushroom is in season
-    ret = {}
-    mushroooms = mushroom.read_mushroom_XML('../data/mushrooms_databank.xml')
-    for s_name in mushroooms.keys():
-        ret[s_name] = int(
-            int(mushroooms[s_name].attr['seasonStart']) <= month <= int(mushroooms[s_name].attr['seasonEnd']))
-    return ret
-
-
-def calc_dynamic_value(patches):
-    # Calculate the actual mushroom probabilities
-    month_factors = get_month_factors(datetime.datetime.today().month)
-
-    for patch in patches:
-        weather = patch.weather_data
-        temperatures = []
-        rains = []
-        humidities = []
-
-        # Look at weather of last 30 days
-        for i in range(30, 1, -1):
-            ts = format_timestamp(datetime.datetime.today() - datetime.timedelta(days=i))
-            if weather[ts] is None or weather[ts]['temperature'] is None:
-                temperatures.append(0)
-                rains.append(0)
-                humidities.append(50)
-                continue
-            temperatures.append(weather[ts]['temperature'])
-            rains.append(weather[ts]['rain'])
-            humidities.append(weather[ts]['humidity'])
-
-        rain_val, temp_val, hum_val = mushroom.environment_factor(rains, temperatures, humidities)
-
-        # Factors may have to be tweaked
-        dynamic_factor = (2 * rain_val + 1 * temp_val + 0.7 * hum_val) / 3.7
-
-        for date in patch.dates:
-            for shroom in date.mushrooms.keys():
-                # Base-Factor, Seasonality, Environment-Factor
-                # min(date.mushrooms[shroom] * month_factors[shroom] * dynamic_factor, 1)
-                date.probabilities[shroom] = min(date.mushrooms[shroom] * dynamic_factor, 1)
-
-
-
-
-
 def convert_stacks_to_shapes(stacks):
     # This function is very specific to this application
     # The shape are structured in a way that 2-1-2-1-2-1-0-3-0-3-0-3 will always work
@@ -143,73 +96,187 @@ def convert_stacks_to_shapes(stacks):
     return final_shapes
 
 
-def combine_rows(rows, column_amount):
+def combine_extension(shapes, extension_points):
+    # This is the final combination step -> Combine all shapes that are touching
+
+    # The shapes are indexed the same as the stacks
+
+    # Use dictionary to keep track which shapes where combined to which ones
+    # This because multiple shapes might point to the same shape for combination
+    used = {}
+
+    start_points = {}
+
+    final_shapes = []
+
+    a = 0
+    for extension in extension_points:
+        a += 1
+        touch_point = extension[0]
+        touch_point_new = extension[1]
+        index = extension[2]
+        index_new = extension[3]
+
+        if index in start_points:
+            index = start_points[index]
+            while index in used:
+                index = used[index]
+            shp = final_shapes[index]
+            used[index] = len(final_shapes)
+            # Erase the current shape as we will create a new bigger one
+            final_shapes[index].append(-1)
+        else:
+            shp = shapes[index]
+            start_points[index] = len(final_shapes)
+
+        break_outer = False
+        if index_new in start_points:
+            index_new = start_points[index_new]
+            while index_new in used:
+                if used[index_new] >= len(final_shapes):
+                    del used[index_new]
+                    break_outer = True
+                    break
+                index_new = used[index_new]
+            if break_outer:
+                # I think this means that this combination was already implicitly done, not sure though
+                # It works so it will stay this way
+                continue
+            shp_new = final_shapes[index_new]
+            used[index_new] = len(final_shapes)
+            # Erase the current shape as we will create a new bigger one
+            final_shapes[index_new].append(-1)
+        else:
+            shp_new = shapes[index_new]
+            start_points[index_new] = len(final_shapes)
+
+        shape = shp[0]
+        shape_new = shp_new[0]
+
+        #if shp[1] != shp_new[1]:
+        #    print("Somethings wrong, I can feel it")
+
+        touch_point_i = shape.index(touch_point)
+
+        touch_point_new_i = shape_new.index(touch_point_new)
+
+        final_shape = []
+
+        for i in range(touch_point_i + 1):
+            final_shape.append(shape[i])
+
+        for i in range(touch_point_new_i, touch_point_new_i + len(shape_new) + 1):
+            final_shape.append(shape_new[i % len(shape_new)])
+
+        for i in range(touch_point_i + 1, len(shape)):
+            final_shape.append(shape[i])
+        final_shapes.append([final_shape, shp[1]])
+
+    f_shapes = []
+    for shape in final_shapes:
+        if len(shape) == 2:
+            f_shapes.append(shape)
+
+    for i in range(len(shapes)):
+        if i not in start_points:
+            f_shapes.append(shapes[i])
+
+    return f_shapes
+
+
+def combine_rows(rows):
     # Combine rows in a patch to reduce shape amount
     # Idea here is:
     # If the shapes touch -> Safe that they touch
     # We later iterate the shapes that touched and combine them into a single large one
     used_shapes = []
-    l = column_amount
     # Each stack will later result in one large shape
     stack_dictionary = {}
     stacks = []
+    print("Combining rows")
+    executions = 0
+    base_counter = 0
+
+    # Shapes or from top left clockwise: 2,1,0,3
+
+    extension_points = []
+    print(len(rows))
     for i in range(len(rows) - 1):
         row = rows[i][0]
         next_row = rows[i + 1][0]
-        j = k = 0
-        while j < len(row) and k < len(next_row):
-            # If this shape and the shape have same probability -> Look if can be combined
-            val1 = rows[i][1][j]
-            val2 = rows[i + 1][1][k]
-            if not l * (i + 1) + k in used_shapes and val1 == val2:
-                if l * i + j in stack_dictionary:
-                    # This shape was already used in a bigger shape -> Get the stack it lays on
-                    stack_index = stack_dictionary[l * i + j]
-                    stack = stacks[stack_index]
-                    shape = stack[len(stack) - 1]
-                    # Geometric logic -> The two middlemost points are the relevant ones to look at
-                    point_0 = shape[0][len(shape) - 2]
-                    point_1 = shape[0][len(shape) - 1]
-                else:
+        for j in range(len(row)):
+            for k in range(len(next_row)):
+                executions += 1
+                # If this shape was already used -> Cant just simply add, create extension point to later combine these
+                # If this shape and the shape have same probability -> Look if can be combined
+                val1 = rows[i][1][j]
+
+                if val1 == 0:
+                    used_shapes.append(i)
+                    continue
+
+                val2 = rows[i + 1][1][k]
+                dif = abs(val2 - val1)
+                if dif < 0.001:
                     shape = row[j]
                     point_0 = shape[0]
                     point_1 = shape[1]
 
-                shape_new = next_row[k]
-                point_2 = shape_new[2]
-                point_3 = shape_new[3]
-                if point_1[1] <= point_3[1] <= point_0[1] or point_1[1] <= point_2[1] <= point_0[1]:
-                    # The shapes touch -> Combine to larger shape
-                    if l * i + j in stack_dictionary:
-                        stack_index = stack_dictionary[l * i + j]
-                        stacks[stack_index].append([shape_new, val1])
+                    shape_new = next_row[k]
+                    point_2 = shape_new[2]
+                    point_3 = shape_new[3]
 
-                    else:
-                        # If not yet in the dictionary -> Beginning of new shape
-                        stack_index = len(stacks)
-                        stacks.append([[shape, val1], [shape_new, val2]])
+                    if point_1[1] <= point_3[1] <= point_0[1] or point_1[1] <= point_2[1] <= point_0[1]\
+                            or point_2[1] <= point_1[1] <= point_0[1] <= point_3[1] or\
+                            point_1[1] <= point_2[1] <= point_3[1] <= point_0[1]:
+                        # The shapes touch -> Combine to larger shape
+                        if base_counter + len(row) + k in used_shapes or base_counter + j in used_shapes:
+                            if base_counter + len(row) + k in stack_dictionary:
+                                index_new = stack_dictionary[base_counter + len(row) + k]
+                            else:
+                                index_new = len(stacks)
+                                stacks.append([[shape, val1], [shape_new, val2]])
+                                stack_dictionary[base_counter + len(row) + k] = index_new
+                                used_shapes.append(base_counter + len(row) + k)
+                            if base_counter + j in stack_dictionary:
+                                index = stack_dictionary[base_counter + j]
+                            else:
+                                index = len(stacks)
+                                stacks.append([[shape, val1], [shape_new, val2]])
+                                stack_dictionary[base_counter + j] = index
+                                used_shapes.append(base_counter + j)
+                            extension_points.append([point_1, point_2, index, index_new])
+                            continue
+                        else:
+                            if int(base_counter + j) in stack_dictionary:
+                                stack_index = stack_dictionary[base_counter + j]
+                                stacks[stack_index].append([shape_new, val1])
 
-                    # Store to which larger shape this shape now belongs
-                    stack_dictionary[l * (i + 1) + k] = stack_index
+                            else:
+                                # If not yet in the dictionary -> Beginning of new shape
+                                stack_index = len(stacks)
+                                stacks.append([[shape, val1], [shape_new, val2]])
 
-                    used_shapes.append(int(i * l + j))
-                    used_shapes.append(int((i + 1) * l + k))
+                            # Store to which larger shape this shape now belongs
+                            stack_dictionary[base_counter + len(row) + k] = stack_index
 
-                if point_1[1] > point_3[1]:
-                    k += 1
-                else:
-                    j += 1
-            else:
-                j += 1
+                        used_shapes.append(base_counter + j)
+                        used_shapes.append(base_counter + len(row) + k)
+        base_counter += len(row)
 
+    print("Converting Stacks to Shapes")
     shapes = convert_stacks_to_shapes(stacks)
 
+    print("Combining Extensions")
+    shapes = combine_extension(shapes, extension_points)
+
+    a = 0
     # Now at last, also add the shapes that could not be combined
     for i in range(len(rows)):
         for j in range(len(rows[i][0])):
-            if int(i * l + j) not in used_shapes:
+            if a + j not in used_shapes:
                 shapes.append([rows[i][0][j], rows[i][1][j]])
-
+        a += len(rows[i][0])
     return shapes
 
 
@@ -226,12 +293,13 @@ def shape_reduction(arr, dist_x, dist_y, row_amount, column_amount):
             v = c * l + r
 
             point = arr[v][0]
+
             # Check if array carries distance-value
             if len(arr[v]) == 3:
                 dist_y = arr[v][2]
             shape = []
             # First Element in Row is starting point
-            if r == 0 or row_tmp[r - 1][1] != arr[v][1]:
+            if r == 0 or row_tmp[r - 1][1] - arr[v][1]:
                 # For graphic representation, the point needs to be translated into a rectangle
                 shape.append([point[0] + dist_y, point[1] + dist_x])
                 shape.append([point[0] + dist_y, point[1] - dist_x])
@@ -253,7 +321,7 @@ def shape_reduction(arr, dist_x, dist_y, row_amount, column_amount):
         shapes.extend(np.array(row_tmp)[final_shapes_row][:, 0])
         rows.append([np.array(row_tmp)[final_shapes_row][:, 0], np.array(row_tmp)[final_shapes_row][:, 1]])
     # Now after reducing the shapes inside each row -> Combine Rows
-    return combine_rows(rows, column_amount)
+    return combine_rows(rows)
 
 
 def remove_zero_shapes(shapes):
@@ -307,10 +375,9 @@ def split_patches(patches, patches_per_file):
     shape = get_patches_shape(patches)
     row_amount = int(patches_per_file / shape[0])
     final_shapes = []
-    for i in range(0, len(patches), row_amount*shape[0]):
-        final_shapes.append(patches[i:min(i+row_amount*shape[0], len(patches))])
+    for i in range(0, len(patches), row_amount * shape[0]):
+        final_shapes.append(patches[i:min(i + row_amount * shape[0], len(patches))])
     return final_shapes
-
 
 
 COMPLETE_REPARSE = True

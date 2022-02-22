@@ -8,6 +8,54 @@
     <water>Niedrig</water>
     <typ>Sand</typ>
   </soil>
+  <soil>
+    <name lang="de">Braunerde und Terra Fusca aus umlagerungsprodukten der Kalk-, Mergel- und Dolomitstein-Verwitterung sowie Rendzina aus Kalkstein</name>
+    <ph>Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Hoch</water>
+    <typ>Kalk</typ>
+  </soil>
+  <soil>
+    <name lang="de">Pelosol-Braunerde / Pelosol-Pseudogley aus verwitterungsprodukten von Mergel- und Tongesteinen</name>
+    <ph>Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Niedrig</water>
+    <typ>Ton</typ>
+  </soil>
+  <soil>
+    <name lang="de">Podsolige Braunerde aus basenarmen quarzitischen Sandsteinen und Konglomeraten</name>
+    <ph>Neutral,Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Niedrig</water>
+    <typ>Sand</typ>
+  </soil>
+  <soil>
+    <name lang="de">Braunerde-Podsol / Podsol aus basenarmen sandsteinen und quarziten</name>
+    <ph>Neutral,Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Niedrig</water>
+    <typ>Sand</typ>
+  </soil>
+  <soil>
+    <name lang="de">Podsolige Braunerde aus loesshaltigen Deckschichten ueber Sandstein und Quarzit</name>
+    <ph>Neutral,Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Niedrig</water>
+    <typ>Sand,Podsol,Loess</typ>
+  </soil>
+  <soil>
+    <name lang="de">Podsol-Braunerde aus harten Ton- und Schluffschiefern, grauwacken und phyllit</name>
+    <ph>Neutral,Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Niedrig</water>
+    <typ>Ton,Schluff,Schiefer</typ>
+  </soil>
     <soil>
     <name lang="de">Wattboden im Gezeitenbereich der Nordsee</name>
     <ph>Neutral</ph>
@@ -42,7 +90,7 @@
   </soil>
   <soil>
     <name lang="de">Niedermoorboden</name>
-    <ph>Neutral,Basisch</ph>
+    <ph>Sauer,Neutral,Basisch</ph>
     <nitrat>Niedrig,Neutral</nitrat>
     <score>0.1</score>
     <water>Hoch</water>
@@ -71,6 +119,14 @@
     <score>1.0</score>
     <water>Hoch</water>
     <typ>Kalk,Ton,Schluff</typ>
+  </soil>
+    <soil>
+    <name lang="de">Tschernosem aus Loess und loessaehnlichen Schluffablagerungen</name>
+    <ph>Sauer,Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>1.0</score>
+    <water>Hoch</water>
+    <typ>Loess,Schluff</typ>
   </soil>
     <soil>
     <name lang="de">Auenboden / Gley aus sandigen bis lehmigen Flusssedimenten</name>
@@ -104,6 +160,22 @@
     <water>Neutral</water>
     <typ>Kalk,Lehm,Sand</typ>
   </soil>
+   <soil>
+    <name lang="de">Rendzina / braunerde-rendzina / pararendzina aus hangschutt ueber kalk-, mergel- und dolomitgesteinen im wechsel mit flacher braunerde ueber terra fusca / terra fusca-parabraunerde aus schluffig-tonigen umlagerungsprodukten der kalksteinverwitterung</name>
+    <ph>Neutral,Basisch</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Neutral</water>
+    <typ>Kalk,Mergel</typ>
+  </soil>
+    <soil>
+    <name lang="de">Pararendzina aus Loess im Wechsel mit Rendzina aus Mergel- und Kalkstein</name>
+    <ph>Neutral,Basisch</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Neutral</water>
+    <typ>Kalk,Mergel</typ>
+  </soil>
   <soil>
     <name lang="de">Parabraunerde aus schluffig-lehmigen Deckschichten auf eiszeitlichen Schotterplatten</name>
     <ph>Neutral,Basisch</ph>
@@ -111,6 +183,14 @@
     <score>0.6</score>
     <water>Neutral</water>
     <typ>Lehm,Schluff</typ>
+  </soil>
+  <soil>
+    <name lang="de">Braunerde aus basischen und intermediaeren magmatischen Gesteinen</name>
+    <ph>Neutral,Basisch</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.6</score>
+    <water>Neutral</water>
+    <typ>Magmatisch</typ>
   </soil>
   <soil>
     <name lang="de">Parabraunerde aus loessbedeckten, lehmig-sandigen Terrassenablagerungen</name>
@@ -124,9 +204,33 @@
     <name lang="de">Podsol-Baunerde aus sandigen Terrassenablagerungen</name>
     <ph>Neutral</ph>
     <nitrat>Niedrig</nitrat>
-    <score>0.4</score>
+    <score>0.5</score>
     <water>Neutral</water>
     <typ>Sand</typ>
+  </soil>
+  <soil>
+    <name lang="de">Braunerde / Podsol Braunerde aus harten Ton- und Schluffschiefern mit Anteilen von Grauwacke, Sandstein, Quarzit und Phyllit</name>
+    <ph>Neutral</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.4</score>
+    <water>Neutral</water>
+    <typ>Sand,Ton,Schiefer</typ>
+  </soil>
+  <soil>
+    <name lang="de">Braunerde / podsol-braunerde aus Schluff-, Sand- und Tonsteinen</name>
+    <ph>Neutral</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.4</score>
+    <water>Neutral</water>
+    <typ>Sand,Schluff,Ton</typ>
+  </soil>
+   <soil>
+    <name lang="de">Braunerde aus sauren magmatischen und metamorphen Gesteinen</name>
+    <ph>Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.4</score>
+    <water>Neutral</water>
+    <typ>Magmatisch</typ>
   </soil>
       <soil>
     <name lang="de">Podsol / Braunerde-Podsol / Gley-Podsol aus sandigen Flussablagerungen</name>
@@ -144,9 +248,25 @@
     <water>Mittel</water>
     <typ>Loess</typ>
   </soil>
+  <soil>
+    <name lang="de">Parabraunerde / Fahlerde / Pseudogley aus Loess oder Loesslehm ueber verschiedenen Gesteinen</name>
+    <ph>Neutral,Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Hoch</water>
+    <typ>Loess,Lehm</typ>
+  </soil>
+  <soil>
+    <name lang="de">Pseudogley / Braunerde / Parabraunerde aus Loess oder Loesslehm</name>
+    <ph>Neutral,Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Hoch</water>
+    <typ>Loess,Lehm</typ>
+  </soil>
    <soil>
     <name lang="de">Parabraunerde / Fahlerde / Pseudogley-Parabraunerde aus Geschiebelehm</name>
-    <ph>Sauer</ph>
+    <ph>Neutral,Sauer</ph>
     <nitrat>Hoch</nitrat>
     <score>0.6</score>
     <water>Mittel</water>
@@ -193,7 +313,31 @@
     <typ>Lehm,Sand</typ>
   </soil>
   <soil>
+    <name lang="de">Pseudogley / Podsol-Pseudogley aus loessvermischten, grusig-lehmigen deckschichten ueber Sandstein und Quarzit</name>
+    <ph>Neutral</ph>
+    <nitrat>Neutral</nitrat>
+    <score>0.7</score>
+    <water>Hoch</water>
+    <typ>Lehm,Sand,Loess</typ>
+  </soil>
+   <soil>
+    <name lang="de">Tschernosem-Parabraunerde / Parabraunerde-Tschernosem aus Loess oder Loesslehm</name>
+    <ph>Neutral</ph>
+    <nitrat>Hoch</nitrat>
+    <score>0.8</score>
+    <water>Hoch</water>
+    <typ>Lehm,Loess</typ>
+  </soil>
+  <soil>
     <name lang="de">Gewaesser</name>
+    <ph>Neutral</ph>
+    <nitrat>Neutral</nitrat>
+    <score>0.0</score>
+    <water>Hoch</water>
+    <typ>Watt</typ>
+  </soil>
+  <soil>
+    <name lang="de">Versiegelte Flaechen in groesseren Staedten</name>
     <ph>Neutral</ph>
     <nitrat>Neutral</nitrat>
     <score>0.0</score>
