@@ -437,12 +437,13 @@ def create_dates(patch, fitting_shapes, possible_records, trees_bool):
 
 def fit_values_to_patches(patches, value_shapes_points, value_records, value_patches, value_preprocessed, trees_bool):
     # This function iterates all patches and finds the correct tree-types at each point in each patch
-    print("Started fitting with amount: " + str(len(patches)))
+    #print("Started fitting with amount: " + str(len(patches)))
     value_shapes_points_np = np.array(value_shapes_points)
     value_records_np = np.array(value_records)
     for i in range(len(patches)):
         if i % 200 == 0:
-            print("Progress: " + str(i))
+            #print("Progress: " + str(i))
+            pass
         patch = patches[i]
         middle = patch.middle
         # Find all shapes that could be used in this patch
@@ -568,11 +569,11 @@ def soil_parse(patches, start_cord, end_cord, complete_reparse, first_reparse):
 
     prepro = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/soil_prepro.dump")
 
-    print("Started fitting soils")
+    #print("Started fitting soils")
     before = time.time()
     patches = fit_values_to_patches(patches, soil_shapes, records, soil_patches, prepro, False)
     end = time.time()
-    print("Time: " + str(end - before))
+    #print("Time: " + str(end - before))
     return patches
 
 
@@ -589,9 +590,6 @@ def reparse(patches, corners, first_reparse):
 
     start_cord = [math.floor(min(corners[0], corners[2])) - 0.5, math.floor(min(corners[1], corners[3])) - 0.5]
     end_cord = [math.ceil(max(corners[0], corners[2])) + 0.5, math.ceil(max(corners[1], corners[3])) + 0.5]
-
-    #start_cord = [47.098687, 6.010150]
-    #end_cord = [55.166234, 14.488775]
 
     COMPLETE_REPARSE = False
 
@@ -623,8 +621,6 @@ def reparse(patches, corners, first_reparse):
 
     tree_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/tree_shape_dist.dump")
 
-    #if COMPLETE_REPARSE:
-        # Preprocess Trees: Fit Tree-Shapes to the Tree-Grid
     if first_reparse:
         prepro = preprocess_values(tree_patches, tree_shapes, tree_shape_distances, 1)
         io_utils.dump_to_file(prepro, constants.pwd + "/data/dumps/prepro_trees.dump")
@@ -635,6 +631,6 @@ def reparse(patches, corners, first_reparse):
     # This requires the most calculation effort -> Speed-Up as much as possible
     patches = fit_values_to_patches(patches, tree_shapes, records, tree_patches, prepro, True)
     end = time.time()
-    print("Total Time for Parsing: " + str(end - start))
+    #print("Total Time for Parsing: " + str(end - start))
     print("Time per Patch: " + str((end - start) / float(len(patches))))
     return patches

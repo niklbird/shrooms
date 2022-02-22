@@ -4,7 +4,9 @@ import utils
 import reparse_utils
 import factor_calculations
 import time
-
+from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+import warnings
+import numpy as np
 
 '''
 Main file of the mushroom app. Here is where all the magic happens.
@@ -14,13 +16,17 @@ Reparse = False
 
 Recover = False
 
-Recalc = False
+Recalc = True
 
 def main():
+    warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
+    warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
+    warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
+
     start = time.time()
     if Reparse:
-        start_cord = [50.167119, 8.156685]
-        end_cord = [49.540255, 9.422859]
+        start_cord = [50.385642, 7.343229]
+        end_cord = [49.359006, 9.760221]
 
         patches_per_run = 1000
 

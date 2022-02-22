@@ -62,7 +62,7 @@ def make_shapes_grainy(shapes):
     for i in range(len(shapes)):
         shape = shapes[i][0]
         size = max_sizes[i]
-        if size > 20:
+        if size > 40:
 
             ret.append(shapes[i])
     print("Amount of Datapoints grainy: " + str(len(ret)))

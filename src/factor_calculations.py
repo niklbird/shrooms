@@ -2,6 +2,7 @@ import mushroom
 import datetime
 import utils
 import soil
+from numba import jit
 
 
 def tree_value(mushroom, tree_type: str):
@@ -9,9 +10,6 @@ def tree_value(mushroom, tree_type: str):
     if mushroom.attr['commonness'] == "Selten":
         com_fac = 0.33
     hardwood = 0
-    if str(type(tree_type)) != "<class 'numpy.str_'>":
-        a = 0
-    #print(type(tree_type))
     if tree_type == "Mischwaelder" or tree_type == "Laubwaelder":
         hardwood = 1
     softwood = 0
@@ -39,7 +37,6 @@ def soil_value(mushroom, soil):
 
     soil_val = 1.5
     sv = mushroom.attr["soil"]
-    a = sv[0]
     if mushroom.attr["soil"] != "All" and not mushroom.attr["soil"].lower() in soil.attr["typ"]:
         soil_val = 1
 
@@ -73,13 +70,14 @@ def calc_static_values(patches):
                 tree_val = tree_value(shroom, trees)
                 if soiL_t not in soils:
                     print(soiL_t)
-                    soil_val = 0.5
+                    soil_val = 0.0
                 else:
                     soil_val = soil_value(shroom, soils[soiL_t])
                 if tree_val == 0 or soil_val == 0:
                     date.mushrooms[shroom.attr['name']] = 0.0
                 else:
                     date.mushrooms[shroom.attr['name']] = (tree_val + soil_val) / 2
+
 
 def calc_dynamic_value(patches):
     # Calculate the actual mushroom probabilities
