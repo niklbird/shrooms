@@ -1,12 +1,12 @@
 # Shroom App
 
-The **Shroom App** is a Webside for mushroom foragers and those who wish to become one!<br>
-It provides a map that gives informatino on the probability to find mushrooms at any point in Germany. The probabilities are updated daily and have a resolution of 100 Meters.<br>
-They are calculated based on the current season, daily weather information pulled from Deutscher Weather Dienst and the vegitation / forrest type at any given point.<br>
+The **Shroom App** is a Website for mushroom foragers and those who wish to become one!<br>
+It provides a map that gives information on the probability to find mushrooms at any point in germany. The probabilities are updated daily and have a resolution of 100 meters.<br>
+They are calculated based on the current season, daily weather information pulled from Deutscher Weather Dienst and the vegetation / forest type at any given point.<br>
 It is of course not possible to give certain information when and where wild mushrooms grow, but the map should give some information where you could start searching and if the current weather conditions are favorable or not.<br>
 The app is in constant developement, if you are an expert in the field of mushroom foraging, please consider supporting the project by giving your expertise on optimal weather / forest conditions (See below *How to contribute*).<br>
 The application is currently hosted on my private server and can be reached [here](https://vogel-server.de).<br>
-**IMPORTANT**: Please be carefull when going foraging and only gather mushrooms that you know. Collecting unknown mushrooms may kill you, and mushroom poisining is certainly not a way you want to got out. If you want to start out with mushroom foraging, consider joining a local mushroom club. If you uncertain on mushrooms you collected, there are experts you can consult. In Germany, they are called Pilzsachverstaendiger and you can probably find one near you. Better be safe than sorry when it comes to wild mushrooms!
+**IMPORTANT**: Please be careful when going foraging and only gather mushrooms that you know. Collecting unknown mushrooms may kill you, and mushroom poisining is certainly not a way you want to go out. If you want to start out with mushroom foraging, consider joining a local mushroom club. If you If you are unsure if a mushroom you have collected is edible or not, there are experts you can consult. In Germany, they are called Pilzsachverstaendiger and you can probably find one near you. Better be safe than sorry when it comes to wild mushrooms!
 
 ## Philosophy of this Project
 Mushroom foraging is a field that has seen a constant decline over the last decades and the knowledge about great techniques and spots keeps getting lost over time. A major factor in this developement is the difficult accessability of this hobby; mushrooms may be deadly if you don't know what you are doing. So you need to start by learning about mushrooms and how to identify safe ones before you can start the fun part of actually foraging and, most important of all, eat wild mushrooms.<br> 
