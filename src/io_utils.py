@@ -91,19 +91,18 @@ def subdivide_patches(patches, shape_amount_sqrt):
 
             #print(f"Target: {target} index {index}")
             return_arr[target].append(patches[index])
-    print(get_patches_shape(return_arr[0]))
-    print(get_patches_shape(return_arr[1]))
+
     return return_arr
 
-def write_to_GEOJSON(patches_a):
+def write_to_GEOJSON(patches_a, reduce_shapes):
     print(f"Patcheese length: {len(patches_a)}")
     patches_shape = get_patches_shape(patches_a)
     patches_d = subdivide_patches(patches_a, 100)
     print(patches_shape)
     for i in range(len(patches_d)):
+        print("e")
         patches = patches_d[i]
-        #patches = patches_a[i:min(i + 5000, len(patches_a))]
-
+        #patches = patches_a
         data = {}
         crs = {'type': 'name', 'properties': {'name': 'EPSG:4326'}}
         data['type'] = 'FeatureCollection'
@@ -116,51 +115,73 @@ def write_to_GEOJSON(patches_a):
         data_grainy['crs'] = crs2
         data_grainy['features'] = []
 
-        patches_shape = get_patches_shape(patches)
-        super_patch = create_super_patch(patches, patches_shape)
+        if reduce_shapes:
+            patches_shape = get_patches_shape(patches)
+            super_patch = create_super_patch(patches, patches_shape)
 
-        dist_x = constants.point_dist / get_lat_fac() / 2.0
+            dist_x = constants.point_dist / get_lat_fac() / 2.0
 
-        print("Reducing Amount of Shapes")
-        final_shapes = shape_reduction(super_patch, dist_x, -1, patches_shape[0] * 10, patches_shape[1] * 10)
+            print("Reducing Amount of Shapes")
+            final_shapes = shape_reduction(super_patch, dist_x, -1, patches_shape[0] * 10, patches_shape[1] * 10)
 
-        print("Removing Shapes with Probability 0")
-        final_shapes = remove_zero_shapes(final_shapes)
+            print("Removing Shapes with Probability 0")
+            final_shapes = remove_zero_shapes(final_shapes)
 
-        print("Amount of Datapoints before: " + str(len(patches) * len(patches[0].dates)))
-        print("Amount of Datapoints after: " + str(len(final_shapes)))
+            print("Amount of Datapoints before: " + str(len(patches) * len(patches[0].dates)))
+            print("Amount of Datapoints after: " + str(len(final_shapes)))
+
+        else:
+            final_shapes = patches
+
         grainy_shapes = make_shapes_grainy(final_shapes)
-        for j in range(len(final_shapes)):
-            new_cords = final_shapes[j][0]
-            new_cords.append(new_cords[0])
-            geom = {}
-            #props = {'color': 'rgba(0, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
-            props = {'color': 'rgba(0, 255, 0 , ' + str(min(0.5 * final_shapes[j][1], 0.5)) + ')'}
-            geom['type'] = 'Polygon'
-            # geom['coordinates'] = [coordinates]
-            geom['coordinates'] = [new_cords]
-            data['features'].append({
-                'type': 'Feature',
-                'geometry': geom,
-                'properties': props
-            })
 
-        for j in range(len(grainy_shapes)):
-            new_cords = grainy_shapes[j][0]
-            new_cords.append(new_cords[0])
-            geom = {}
-            #props = {'color': 'rgba(0, 255, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
-            props = {'color': 'rgba(0, 255, 0, ' + str(min(0.5 * grainy_shapes[j][1], 0.5)) + ')'}
-            geom['type'] = 'Polygon'
-            # geom['coordinates'] = [coordinates]
-            geom['coordinates'] = [new_cords]
-            data_grainy['features'].append({
-                'type': 'Feature',
-                'geometry': geom,
-                'properties': props
-            })
+        dump_to_file(final_shapes, constants.pwd + f"/data/tmp/tmp-shapes{i}.dump")
+        dump_to_file(grainy_shapes, constants.pwd + f"/data/tmp/tmp-shapes-grainy{i}.dump")
 
-        with open(constants.pwd + f'/web/data{i}.json', 'w') as outfile:
-            json.dump(data, outfile)
-        with open(constants.pwd + f'/web/data_grainy{i}.json', 'w') as outfile:
-            json.dump(data_grainy, outfile)
+    final_shapes = []
+    grainy_shapes = []
+    for i in range(len(patches_d)):
+        final_shapes.extend(read_dump_from_file(constants.pwd + f"/data/tmp/tmp-shapes{i}.dump"))
+        grainy_shapes.extend(read_dump_from_file(constants.pwd + f"/data/tmp/tmp-shapes-grainy{i}.dump"))
+
+
+    final_props = []
+    final_props_grainy = []
+    for j in range(len(final_shapes)):
+        new_cords = final_shapes[j][0]
+        new_cords.append(new_cords[0])
+        geom = {}
+        #props = {'color': 'rgba(0, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
+        props = {'color': 'rgba(0, 255, 0 , ' + str(min(0.5 * final_shapes[j][1], 0.5)) + ')'}
+        geom['type'] = 'Polygon'
+        geom['coordinates'] = [new_cords]
+        data['features'].append({
+            'type': 'Feature',
+            'geometry': geom,
+            'properties': props
+        })
+        final_props.append(props)
+
+    for j in range(len(grainy_shapes)):
+        new_cords = grainy_shapes[j][0]
+        new_cords.append(new_cords[0])
+        geom = {}
+        #props = {'color': 'rgba(0, 255, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
+        props = {'color': 'rgba(0, 255, 0, ' + str(min(0.5 * grainy_shapes[j][1], 0.5)) + ')'}
+        geom['type'] = 'Polygon'
+        geom['coordinates'] = [new_cords]
+        data_grainy['features'].append({
+            'type': 'Feature',
+            'geometry': geom,
+            'properties': props
+        })
+        final_props_grainy.append(props)
+
+    with open(constants.pwd + f'/web/data.json', 'w') as outfile:
+        json.dump(data, outfile)
+    with open(constants.pwd + f'/web/data_grainy.json', 'w') as outfile:
+        json.dump(data_grainy, outfile)
+    with open(constants.pwd + f'/web/props.json', 'w') as outfile:
+        json.dump(data, outfile)
+    with open(constants.pwd + f'/web/props_grainy.json', 'w') as outfile:
+        json.dump(data_grainy, outfile)

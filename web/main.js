@@ -11,7 +11,7 @@ import {Fill, Style} from './node_modules/ol/style';
 
 const source = new VectorSource({
   title: 'added Layer',
-  url: './data.txt',
+  url: './data.json',
   format: new GeoJSON(),
 });
 
@@ -29,7 +29,7 @@ const layer = new VectorLayer({
 
 const source_grainy = new VectorSource({
   title: 'added Layer',
-  url: './data_grainy.txt',
+  url: './data_grainy.json',
   format: new GeoJSON(),
 });
  

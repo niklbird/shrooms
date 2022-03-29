@@ -25,8 +25,8 @@ def main():
 
     start = time.time()
     if Reparse:
-        start_cord = [50.385642, 7.343229]
-        end_cord = [49.359006, 9.760221]
+        start_cord = [50.524417, 7.414111]
+        end_cord = [49.329227, 10.083789]
 
         patches_per_run = 1000
 
@@ -81,7 +81,7 @@ def main():
     factor_calculations.calc_dynamic_value(patches)
 
     # Dump final result to a file for usage in JS
-    io_utils.write_to_GEOJSON(patches)
+    io_utils.write_to_GEOJSON(patches, True)
     end = time.time()
     print("Total Time for this run: " + str(end - start))
 

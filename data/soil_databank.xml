@@ -16,6 +16,22 @@
     <water>Hoch</water>
     <typ>Kalk</typ>
   </soil>
+    <soil>
+    <name lang="de">Braunerde aus Mergelgesteinen und kalkhaltigen Schottern</name>
+    <ph>Neutral</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Hoch</water>
+    <typ>Kalk</typ>
+  </soil>
+      <soil>
+    <name lang="de">Braunerde aus basenreichen Tuffen</name>
+    <ph>Neutral</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Hoch</water>
+    <typ>Tuffen</typ>
+  </soil>
   <soil>
     <name lang="de">Pelosol-Braunerde / Pelosol-Pseudogley aus verwitterungsprodukten von Mergel- und Tongesteinen</name>
     <ph>Neutral</ph>
@@ -258,6 +274,14 @@
   </soil>
   <soil>
     <name lang="de">Pseudogley / Braunerde / Parabraunerde aus Loess oder Loesslehm</name>
+    <ph>Neutral,Sauer</ph>
+    <nitrat>Niedrig</nitrat>
+    <score>0.6</score>
+    <water>Hoch</water>
+    <typ>Loess,Lehm</typ>
+  </soil>
+    <soil>
+    <name lang="de">Braunerde / Pseudogley aus basaltgrushaltigem Loesslehm</name>
     <ph>Neutral,Sauer</ph>
     <nitrat>Niedrig</nitrat>
     <score>0.6</score>
