@@ -4,6 +4,7 @@ import reparse_utils
 from utils import *
 import os
 import math
+import datetime
 
 '''
 Utilities to deal with IO-Operations. This includes writing the final data to a GEOJSON file.
@@ -62,7 +63,7 @@ def make_shapes_grainy(shapes):
     for i in range(len(shapes)):
         shape = shapes[i][0]
         size = max_sizes[i]
-        if size > 40:
+        if size > 15:
 
             ret.append(shapes[i])
     print("Amount of Datapoints grainy: " + str(len(ret)))
@@ -110,7 +111,6 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
     print(patches_shape)
 
     for i in range(len(patches_d)):
-        print("e")
         patches = patches_d[i]
         #patches = patches_a
         data = {}
@@ -195,9 +195,12 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         })
         final_props_grainy += col_val + ";"
 
-    with open(constants.pwd + f'/web/data.json', 'w') as outfile:
+    day = datetime.datetime.today().day
+    file_name = constants.pwd + f'/web/data{day}.json'
+    file_name_grainy = constants.pwd + f'/web/data_grainy{day}.json'
+    with open(file_name, 'w') as outfile:
         json.dump(data, outfile)
-    with open(constants.pwd + f'/web/data_grainy.json', 'w') as outfile:
+    with open(file_name_grainy, 'w') as outfile:
         json.dump(data_grainy, outfile)
     with open(constants.pwd + f'/web/update_data.txt', 'w') as outfile:
         outfile.write(final_props)

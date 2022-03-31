@@ -7,11 +7,11 @@ import GeoJSON from './node_modules/ol/format/GeoJSON';
 import VectorLayer from './node_modules/ol/layer/Vector';
 import VectorSource from './node_modules/ol/source/Vector';
 import {Fill, Style} from './node_modules/ol/style';
-
+var today = new Date().getDate();
 
 const source = new VectorSource({
   title: 'added Layer',
-  url: './data.json',
+  url: './data' + today + '.json',
   format: new GeoJSON(),
 });
 
@@ -29,7 +29,7 @@ const layer = new VectorLayer({
 
 const source_grainy = new VectorSource({
   title: 'added Layer',
-  url: './data_grainy.json',
+  url: './data_grainy' + today + '.json',
   format: new GeoJSON(),
 });
  

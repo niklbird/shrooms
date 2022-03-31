@@ -1,5 +1,5 @@
 import json
-import constants
+import datetime
 
 def check_format(value: str):
     values = value.split(",")
@@ -14,19 +14,10 @@ def check_format(value: str):
             return False
     return True
 
-def new_file():
-    with open(constants.pwd + f'/../web/data0.json', 'r') as outfile:
-        data = json.load(outfile)
 
-    ret = ""
-    for i in range(len(data["features"])):
-        ret += "0,132,0,0.5;"
+day = datetime.datetime.today().day
 
-    ret = ret[:len(ret) - 1]
-    with open(constants.pwd + f'/../web/update_data.txt', 'w') as outfile:
-        outfile.write(ret)
-
-DATA_DIR = "/var/www/shrooms/web/data.json"
+DATA_DIR = f"/var/www/shroom_server/data{day}.json"
 UPDATE_DIR = "/home/niklas/shroom_data/update_data.txt"
 
 def update_data():

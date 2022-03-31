@@ -26,8 +26,8 @@ def main(Reparse, Recover, Recalc, Publish):
         #start_cord = [50.524417, 7.414111]
         #end_cord = [49.329227, 10.083789]
 
-        start_cord = [49.957309, 8.683261]
-        end_cord = [49.761212, 9.062289]
+        start_cord = [49.998816, 8.342684]
+        end_cord = [49.599489, 9.568347]
 
         patches_per_run = 1000
 
@@ -55,7 +55,7 @@ def main(Reparse, Recover, Recalc, Publish):
             parsed = reparse_utils.reparse(patches_split[i], corners, first_reparse)
             io_utils.dump_to_file(parsed, constants.pwd + file_names[i])
             first_reparse = False
-            print(f"Finished parsing patch {i} of {len(patches_split)}")
+            print(f"Finished parsing patch {i + 1} of {len(patches_split)}")
 
     patches_split = io_utils.read_patches_from_folder(constants.pwd + "/data/dumps/patches/")
 
@@ -82,7 +82,7 @@ def main(Reparse, Recover, Recalc, Publish):
     factor_calculations.calc_dynamic_value(patches)
 
     # Dump final result to a file for usage in JS
-    io_utils.write_to_GEOJSON(patches, False)
+    io_utils.write_to_GEOJSON(patches, Reparse)
 
     if Publish:
         web_utils.default_file_send()
@@ -95,6 +95,7 @@ if __name__ == "__main__":
         Publish = True
     else:
         Publish = True
+
     Reparse = False
 
     Recover = False
