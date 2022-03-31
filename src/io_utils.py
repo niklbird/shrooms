@@ -63,12 +63,30 @@ def make_shapes_grainy(shapes):
     for i in range(len(shapes)):
         shape = shapes[i][0]
         size = max_sizes[i]
-        if size > 15:
+        if size > 9:
 
             ret.append(shapes[i])
     print("Amount of Datapoints grainy: " + str(len(ret)))
     return ret
 
+
+def remove_points(final_shapes):
+    new_shapes = []
+    for shape in final_shapes:
+        excluded_points = []
+        points = shape[0]
+        for i in range(1, len(points) - 2):
+            point = points[i]
+            if point[0] == points[i + 1][0] == points[i + 2][0] or \
+                    point[1] == points[i + 1][1] == points[i + 2][1]:
+                excluded_points.append(i + 1)
+                print("Removed a point")
+        new_points = []
+        for i in range(len(points)):
+            if i not in excluded_points:
+                new_points.append(points[i])
+        new_shapes.append([new_points, shape[1], shape[2]])
+    return new_shapes
 
 
 def subdivide_patches(patches, shape_amount_sqrt):
@@ -90,7 +108,6 @@ def subdivide_patches(patches, shape_amount_sqrt):
 
             target = x_target + y_target * x_split
 
-            #print(f"Target: {target} index {index}")
             return_arr[target].append(patches[index])
 
     return return_arr
@@ -112,7 +129,6 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
 
     for i in range(len(patches_d)):
         patches = patches_d[i]
-        #patches = patches_a
         data = {}
         crs = {'type': 'name', 'properties': {'name': 'EPSG:4326'}}
         data['type'] = 'FeatureCollection'
@@ -149,6 +165,7 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         else:
             final_shapes = patches
 
+        final_shapes = remove_points(final_shapes)
         grainy_shapes = make_shapes_grainy(final_shapes)
 
         dump_to_file(final_shapes, constants.pwd + f"/data/tmp/tmp-shapes{i}.dump")

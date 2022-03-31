@@ -26,8 +26,8 @@ def main(Reparse, Recover, Recalc, Publish):
         #start_cord = [50.524417, 7.414111]
         #end_cord = [49.329227, 10.083789]
 
-        start_cord = [49.998816, 8.342684]
-        end_cord = [49.599489, 9.568347]
+        start_cord = [50.009629, 8.216685]
+        end_cord = [49.475836, 9.642161]
 
         patches_per_run = 1000
 
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     else:
         Publish = True
 
-    Reparse = False
+    Reparse = True
 
     Recover = False
 
