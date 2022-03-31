@@ -7,26 +7,27 @@ import time
 from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
 import warnings
 import numpy as np
+import web_utils
+import sys
 
 '''
 Main file of the mushroom app. Here is where all the magic happens.
 '''
 
-Reparse = False
 
-Recover = False
 
-Recalc = True
-
-def main():
+def main(Reparse, Recover, Recalc, Publish):
     warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
     warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
     warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
     start = time.time()
     if Reparse:
-        start_cord = [50.524417, 7.414111]
-        end_cord = [49.329227, 10.083789]
+        #start_cord = [50.524417, 7.414111]
+        #end_cord = [49.329227, 10.083789]
+
+        start_cord = [49.957309, 8.683261]
+        end_cord = [49.761212, 9.062289]
 
         patches_per_run = 1000
 
@@ -81,10 +82,24 @@ def main():
     factor_calculations.calc_dynamic_value(patches)
 
     # Dump final result to a file for usage in JS
-    io_utils.write_to_GEOJSON(patches, True)
+    io_utils.write_to_GEOJSON(patches, False)
+
+    if Publish:
+        web_utils.default_file_send()
     end = time.time()
     print("Total Time for this run: " + str(end - start))
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1].lower() == "publish":
+        Publish = True
+    else:
+        Publish = True
+    Reparse = False
+
+    Recover = False
+
+    Recalc = True
+
+    Publish = True
+    main(Reparse, Recover, Recalc, Publish)
