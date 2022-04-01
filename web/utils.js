@@ -50,8 +50,9 @@ function check_format(data){
 }
 
 function updateLocalFiles(update, updateGrainy){
-  var data = fs.readFileSync('./data.json', 'utf8');
-  var grainy = fs.readFileSync('./data_grainy.json', 'utf8');
+  var today = new Date().getDate();
+  var data = fs.readFileSync('./data' + today + '.json', 'utf8');
+  var grainy = fs.readFileSync('./data_grainy' + today + '.json', 'utf8');
   
   var obj = JSON.parse(data);
   var obj_g = JSON.parse(grainy);
@@ -103,6 +104,8 @@ function handleResult(data){
   var update_grainy_sig = obj.update_grainy.signature;
 
   var final_result = verifyReceivedData(update, update_sig) && verifyReceivedData(update_grainy, update_grainy_sig)
+
+  console.log(final_result)
   final_result = true;
   if(final_result){
     updateLocalFiles(update, update_grainy)
@@ -147,8 +150,10 @@ function handleGetResponse(responseText){
 //var signature = getSignatureToVerify(data);
 
 //verify.update(data);
+var data = fs.readFileSync('./update_file.json', 'utf8');
 
-httpGetAsync("vogel-server.de", handleGetResponse);
+handleResult(data)
+//httpGetAsync("vogel-server.de", handleGetResponse);
 
 
 //var verification = verify.verify(publicKey, signature, SIGNATURE_FORMAT);

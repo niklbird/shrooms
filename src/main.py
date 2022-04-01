@@ -96,7 +96,7 @@ if __name__ == "__main__":
     else:
         Publish = True
 
-    Reparse = True
+    Reparse = False
 
     Recover = False
 

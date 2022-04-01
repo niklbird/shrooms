@@ -38,6 +38,21 @@ def generate_key_pair(priv_key_file, pub_key_file):
             )
         )
 
+
+def sign_data(priv_key_file, data):
+    # Load the private key.
+    with open(priv_key_file, 'r') as f:
+        private_key = RSA.import_key(f.read())
+    # hash the message
+    digest = SHA256.new(data)
+
+    # sign the digest
+    signature = pkcs1_15.new(private_key).sign(digest)
+    signature = b64encode(signature)
+    return signature
+
+
+
 def sign_file(priv_key_file, data_file, sig_file):
     # Load the private key.
     with open(priv_key_file, 'r') as f:
@@ -54,7 +69,19 @@ def sign_file(priv_key_file, data_file, sig_file):
     with open(sig_file, 'wb') as f:
         f.write(signature)
 
-def verify_sig(pub_key_file, data_file, signature_file):
+def verify_data(pub_key_file, data, signature):
+    with open(pub_key_file, 'r') as f:
+        public_key = RSA.import_key(f.read())
+
+    # hash the message
+    digest = SHA256.new(data)
+
+    signature = base64.b64decode(signature)
+    # verify the digest and signature
+    pkcs1_15.new(public_key).verify(digest, signature)
+
+
+def verify_file(pub_key_file, data_file, signature_file):
     with open(pub_key_file, 'r') as f:
         public_key = RSA.import_key(f.read())
 
@@ -73,8 +100,11 @@ def verify_sig(pub_key_file, data_file, signature_file):
 priv_key = "./private.key"
 pub_key = "./public.pem"
 data = "./lala.txt"
-sig_file = "./signature.sig"
+sig_file = "server-side/signature.sig"
 
+
+#sig = sign_data("../res/private.key", "hallo".encode("utf8"))
+#verify_data("../res/public.pem", "hallo".encode("utf8"), sig)
 #generate_key_pair(priv_key, pub_key)
-sign_file(priv_key, data, sig_file)
-verify_sig(pub_key, data, sig_file)
+#sign_file(priv_key, data, sig_file)
+#verify_sig(pub_key, data, sig_file)

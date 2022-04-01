@@ -5,6 +5,8 @@ from utils import *
 import os
 import math
 import datetime
+import json
+import security_utils
 
 '''
 Utilities to deal with IO-Operations. This includes writing the final data to a GEOJSON file.
@@ -120,6 +122,23 @@ def update_probs(patch, shapes):
     return shapes
 
 
+def generate_app_update(update, update_grainy):
+    sig_u = security_utils.sign_data("./res/private.key", update.encode("utf8"))
+    sig_g = security_utils.sign_data("./res/private.key", update_grainy.encode("utf8"))
+
+    json_o = {"update": {
+                    "data": update,
+                    "signature": sig_u.decode("utf8")
+                    },
+                "update_grainy": {
+                    "data": update_grainy,
+                    "signature": sig_g.decode("utf8")
+                }
+              }
+
+    json_s = json.dumps(json_o)
+    return json_s
+
 def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
 
     print(f"Patcheese length: {len(patches_a)}")
@@ -185,7 +204,7 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         new_cords.append(new_cords[0])
         geom = {}
         #props = {'color': 'rgba(0, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
-        col_val = f"0, 128, 0, {str(min(0.5 * final_shapes[j][1], 0.5))}"
+        col_val = f"0,128,0,{str(min(0.5 * final_shapes[j][1], 0.5))}"
         props = {'color': f'rgba({col_val})'}
         geom['type'] = 'Polygon'
         geom['coordinates'] = [new_cords]
@@ -215,6 +234,9 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
     day = datetime.datetime.today().day
     file_name = constants.pwd + f'/web/data{day}.json'
     file_name_grainy = constants.pwd + f'/web/data_grainy{day}.json'
+
+    update_file = generate_app_update(final_props, final_props_grainy)
+
     with open(file_name, 'w') as outfile:
         json.dump(data, outfile)
     with open(file_name_grainy, 'w') as outfile:
@@ -223,3 +245,5 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         outfile.write(final_props)
     with open(constants.pwd + f'/web/update_data_grainy.txt', 'w') as outfile:
         outfile.write(final_props_grainy)
+    with open(constants.pwd + f'/web/update_file.json', 'w') as outfile:
+        outfile.write(update_file)

@@ -29,7 +29,4 @@ def send_file_to_server(filename_l, filename_s):
 def default_file_send():
     send_file_to_server(constants.pwd + f'/web/update_data.txt', "update_data.txt")
     send_file_to_server(constants.pwd + f'/web/update_data_grainy.txt', "update_data_grainy.txt")
-
-
-if __name__ == "__main__":
-    send_file_to_server(constants.pwd + f'/web/props.txt', "update_data.txt")
+    send_file_to_server(constants.pwd + f'/web/update_file.json', "update_file.json")

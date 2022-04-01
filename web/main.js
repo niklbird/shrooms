@@ -55,7 +55,7 @@ const map = new Map({
     new TileLayer({
       source: new OSM()
     }),
-    layer,layer_grainy,
+    layer_grainy,layer
   ],
   view: new View({
     center: [1118760.88, 6636047.68],
