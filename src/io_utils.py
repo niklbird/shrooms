@@ -71,6 +71,7 @@ def make_shapes_grainy(shapes):
 
 
 def remove_points(final_shapes):
+    # Remove unnecessary points from the shapes
     new_shapes = []
     for shape in final_shapes:
         excluded_points = []
@@ -80,7 +81,6 @@ def remove_points(final_shapes):
             if point[0] == points[i + 1][0] == points[i + 2][0] or \
                     point[1] == points[i + 1][1] == points[i + 2][1]:
                 excluded_points.append(i + 1)
-                print("Removed a point")
         new_points = []
         for i in range(len(points)):
             if i not in excluded_points:
