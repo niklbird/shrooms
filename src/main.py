@@ -91,12 +91,14 @@ def main(Reparse, Recover, Recalc, Publish):
 
 
 if __name__ == "__main__":
+    Reparse = False
+   
     if len(sys.argv) > 1 and sys.argv[1].lower() == "publish":
         Publish = True
+        Reparse = False
     else:
         Publish = True
 
-    Reparse = False
 
     Recover = False
 

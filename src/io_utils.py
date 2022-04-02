@@ -25,7 +25,6 @@ def read_dump_from_file(filename):
         fp.close()
         return arr
 
-
 def clear_directory(directory):
     filelist = [f for f in os.listdir(directory) if f.endswith(".dump")]
     for f in filelist:
@@ -59,6 +58,9 @@ def flatten_patches(patches):
     return [item for sublist in patches for item in sublist]
 
 
+'''
+Only take shapes that have a certain size to display them at larger zoom-levels
+'''
 def make_shapes_grainy(shapes):
     max_sizes = reparse_utils.find_max_size_shapes(np.array(shapes))
     ret = []
@@ -72,6 +74,9 @@ def make_shapes_grainy(shapes):
     return ret
 
 
+'''
+Remove unnecessary points of a shape, i.e. points that lie on a line
+'''
 def remove_points(final_shapes):
     # Remove unnecessary points from the shapes
     new_shapes = []
@@ -91,6 +96,10 @@ def remove_points(final_shapes):
     return new_shapes
 
 
+'''
+Divide one larger patch in multiple smaller once.
+Not trivial as patches should remain rectangular.
+'''
 def subdivide_patches(patches, shape_amount_sqrt):
     patches_shape = get_patches_shape(patches)
 
@@ -114,6 +123,10 @@ def subdivide_patches(patches, shape_amount_sqrt):
 
     return return_arr
 
+
+'''
+Update probabilities with the update-data
+'''
 def update_probs(patch, shapes):
     for i in range(len(shapes)):
         ind = shapes[i][2]
@@ -122,6 +135,10 @@ def update_probs(patch, shapes):
     return shapes
 
 
+'''
+Generate the update-file for the phone-app. 
+This file data is signed.
+'''
 def generate_app_update(update, update_grainy):
     sig_u = security_utils.sign_data("./res/private.key", update.encode("utf8"))
     sig_g = security_utils.sign_data("./res/private.key", update_grainy.encode("utf8"))
@@ -139,15 +156,19 @@ def generate_app_update(update, update_grainy):
     json_s = json.dumps(json_o)
     return json_s
 
-def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
 
-    print(f"Patcheese length: {len(patches_a)}")
+def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
     patches_shape = get_patches_shape(patches_a)
+
+    # Subdivide patches to ease calculation
+    # This is necessary as the shape-reduction algorithm works recursively
+    # Calculating to many shapes at ones can lead to a stack-overflow or very long calculation-times
     patches_d = subdivide_patches(patches_a, 100)
-    print(patches_shape)
 
     for i in range(len(patches_d)):
         patches = patches_d[i]
+
+        # Create file in GEOJSON format
         data = {}
         crs = {'type': 'name', 'properties': {'name': 'EPSG:4326'}}
         data['type'] = 'FeatureCollection'
@@ -174,12 +195,10 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
             print("Reducing Amount of Shapes")
             final_shapes = shape_reduction(super_patch, dist_x, -1, patches_shape[0] * 10, patches_shape[1] * 10)
 
-            print("Removing Shapes with Probability 0")
             final_shapes = remove_zero_shapes(final_shapes)
 
             print("Amount of Datapoints before: " + str(len(patches) * len(patches[0].dates)))
             print("Amount of Datapoints after: " + str(len(final_shapes)))
-
 
         else:
             final_shapes = patches
@@ -192,6 +211,8 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
 
     final_shapes = []
     grainy_shapes = []
+
+    # Finaly, combine subdivided patches to a big one again
     for i in range(len(patches_d)):
         final_shapes.extend(read_dump_from_file(constants.pwd + f"/data/tmp/tmp-shapes{i}.dump"))
         grainy_shapes.extend(read_dump_from_file(constants.pwd + f"/data/tmp/tmp-shapes-grainy{i}.dump"))
@@ -203,7 +224,6 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         new_cords = final_shapes[j][0]
         new_cords.append(new_cords[0])
         geom = {}
-        #props = {'color': 'rgba(0, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
         col_val = f"0,128,0,{str(min(0.5 * final_shapes[j][1], 0.5))}"
         props = {'color': f'rgba({col_val})'}
         geom['type'] = 'Polygon'
@@ -219,7 +239,6 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         new_cords = grainy_shapes[j][0]
         new_cords.append(new_cords[0])
         geom = {}
-        #props = {'color': 'rgba(0, 255, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
         col_val = f"0, 128, 0, {str(min(0.5 * grainy_shapes[j][1], 0.5))}"
         props = {'color': f'rgba({col_val})'}
         geom['type'] = 'Polygon'

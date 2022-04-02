@@ -41,7 +41,7 @@ def soil_value(mushroom, soil):
         soil_val = 1
 
     soil_score = float(soil.attr["score"])
-    return ph_val * soil_val #* soil_score
+    return ph_val * soil_val * soil_score
 
 def get_month_factors(month):
     # Factor that indicates if mushroom is in season
@@ -64,9 +64,6 @@ def calc_static_values(patches):
             trees = date.trees
             soiL_t = date.soil.lower()
             for shroom in mushrooms.values():
-                #print("-->")
-                #print(date.soil)
-                #print(soil.soil_value(shroom, soils[soiL_t]))
                 tree_val = tree_value(shroom, trees)
                 if soiL_t not in soils:
                     print(soiL_t)

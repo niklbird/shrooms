@@ -255,7 +255,6 @@ def patch_in_shape(shape, patch):
         for p in patch.points:
             if shape_contains_point(np.array(shape), np.array(p)):
                 contained_points.append(p)
-                print("Kept point")
 
         patch.points = contained_points
         return
@@ -335,7 +334,6 @@ def fit_trees_to_points(tree_shapes_points, points):
     # Find the correct shape for each point
     # If no shape is found -> None
     ret = []
-    tree_shapes_points_np = tree_shapes_points
     re = 0
     for i in range(len(points)):
         re = fit_trees_to_point(tree_shapes_points, points[i], int(re))
@@ -437,13 +435,9 @@ def create_dates(patch, fitting_shapes, possible_records, trees_bool):
 
 def fit_values_to_patches(patches, value_shapes_points, value_records, value_patches, value_preprocessed, trees_bool):
     # This function iterates all patches and finds the correct tree-types at each point in each patch
-    #print("Started fitting with amount: " + str(len(patches)))
     value_shapes_points_np = np.array(value_shapes_points)
     value_records_np = np.array(value_records)
     for i in range(len(patches)):
-        if i % 200 == 0:
-            #print("Progress: " + str(i))
-            pass
         patch = patches[i]
         middle = patch.middle
         # Find all shapes that could be used in this patch
@@ -513,17 +507,19 @@ def preprocess_records(records):
             "ss")
         records[i] = record
 
-
+'''
+Get the rectangle size of patches
+'''
 def get_patches_shape(patches):
-    # Get the rectangle of patches
     c = 0
     while patches[c].corners[0][1] == patches[c + 1].corners[0][1]:
         c += 1
     return c + 1, int(len(patches) / (c + 1))
 
-
+'''
+Convert the shapes to the format more suited for processing
+'''
 def convert_shapes_to_format(shapes):
-    # Convert the shapes to the format more suited for processing
     for i in range(len(shapes)):
         parts = shapes[i].parts
         my_array = np.array(shapes[i].points)
@@ -539,9 +535,10 @@ def convert_shapes_to_format(shapes):
             shapes[i] = [my_array]
     return shapes
 
-
+'''
+Parse in Soil Data. If this is the first reparse, the values need to be pre-processed
+'''
 def soil_parse(patches, start_cord, end_cord, complete_reparse, first_reparse):
-    # Parse in Soil Data
     if complete_reparse:
         soil_shapes, records, lu = parse_in_shape(constants.pwd + "/data/soil_folder/Bodenarten_new_new", "EPSG:4326")
         # Changing first and second coordinate as format is inconsistent
@@ -562,18 +559,13 @@ def soil_parse(patches, start_cord, end_cord, complete_reparse, first_reparse):
 
     soil_shape_distances = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/soil_shape_dist.dump")
 
-    #if complete_reparse:
     if first_reparse:
         prepro = preprocess_values(soil_patches, soil_shapes, soil_shape_distances, 1.0)
         io_utils.dump_to_file(prepro, constants.pwd + "/data/dumps/soil_prepro.dump")
 
     prepro = io_utils.read_dump_from_file(constants.pwd + "/data/dumps/soil_prepro.dump")
 
-    #print("Started fitting soils")
-    before = time.time()
     patches = fit_values_to_patches(patches, soil_shapes, records, soil_patches, prepro, False)
-    end = time.time()
-    #print("Time: " + str(end - before))
     return patches
 
 
@@ -631,6 +623,5 @@ def reparse(patches, corners, first_reparse):
     # This requires the most calculation effort -> Speed-Up as much as possible
     patches = fit_values_to_patches(patches, tree_shapes, records, tree_patches, prepro, True)
     end = time.time()
-    #print("Total Time for Parsing: " + str(end - start))
     print("Time per Patch: " + str((end - start) / float(len(patches))))
     return patches
