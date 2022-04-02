@@ -1,5 +1,6 @@
 web/node_modules
-web/old
+web/data
+web/publish
 web/js
 *.shp
 src/.idea

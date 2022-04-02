@@ -232,8 +232,8 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         final_props_grainy += col_val + ";"
 
     day = datetime.datetime.today().day
-    file_name = constants.pwd + f'/web/data{day}.json'
-    file_name_grainy = constants.pwd + f'/web/data_grainy{day}.json'
+    file_name = constants.pwd + f'/web/data/data{day}.json'
+    file_name_grainy = constants.pwd + f'/web/data/data_grainy{day}.json'
 
     update_file = generate_app_update(final_props, final_props_grainy)
 
@@ -241,9 +241,9 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         json.dump(data, outfile)
     with open(file_name_grainy, 'w') as outfile:
         json.dump(data_grainy, outfile)
-    with open(constants.pwd + f'/web/update_data.txt', 'w') as outfile:
+    with open(constants.pwd + f'/web/publish/update_data.txt', 'w') as outfile:
         outfile.write(final_props)
-    with open(constants.pwd + f'/web/update_data_grainy.txt', 'w') as outfile:
+    with open(constants.pwd + f'/web/publish/update_data_grainy.txt', 'w') as outfile:
         outfile.write(final_props_grainy)
-    with open(constants.pwd + f'/web/update_file.json', 'w') as outfile:
+    with open(constants.pwd + f'/web/publish/update_file.json', 'w') as outfile:
         outfile.write(update_file)
