@@ -4,11 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Using OpenLayers with Vite</title>
+    <title>Shroom App</title>
   </head>
   <body>
-    <div id="map"></div>
-    <div id="info"></div>
+      <div id="map"></div>
+      <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+      </div>   
     <link href="./css/style.css" rel="stylesheet">
     <script type="module" src="./js/main.js"></script>
   </body>
