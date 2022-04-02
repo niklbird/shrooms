@@ -111,7 +111,6 @@ def calc_dynamic_value(patches):
                 # Base-Factor, Seasonality, Environment-Factor
                 # min(date.mushrooms[shroom] * month_factors[shroom] * dynamic_factor, 1)
                 date.probabilities[shroom] = min(date.mushrooms[shroom] * dynamic_factor, 1)
-                #date.probabilities[shroom] = min(date.mushrooms[shroom] * dynamic_factor * 100, 1)
 
 
 def temp_deviation(temp, opt_val):

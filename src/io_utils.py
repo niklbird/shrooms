@@ -4,6 +4,9 @@ import reparse_utils
 from utils import *
 import os
 import math
+import datetime
+import json
+import security_utils
 
 '''
 Utilities to deal with IO-Operations. This includes writing the final data to a GEOJSON file.
@@ -62,12 +65,30 @@ def make_shapes_grainy(shapes):
     for i in range(len(shapes)):
         shape = shapes[i][0]
         size = max_sizes[i]
-        if size > 40:
+        if size > 9:
 
             ret.append(shapes[i])
     print("Amount of Datapoints grainy: " + str(len(ret)))
     return ret
 
+
+def remove_points(final_shapes):
+    # Remove unnecessary points from the shapes
+    new_shapes = []
+    for shape in final_shapes:
+        excluded_points = []
+        points = shape[0]
+        for i in range(1, len(points) - 2):
+            point = points[i]
+            if point[0] == points[i + 1][0] == points[i + 2][0] or \
+                    point[1] == points[i + 1][1] == points[i + 2][1]:
+                excluded_points.append(i + 1)
+        new_points = []
+        for i in range(len(points)):
+            if i not in excluded_points:
+                new_points.append(points[i])
+        new_shapes.append([new_points, shape[1], shape[2]])
+    return new_shapes
 
 
 def subdivide_patches(patches, shape_amount_sqrt):
@@ -89,21 +110,44 @@ def subdivide_patches(patches, shape_amount_sqrt):
 
             target = x_target + y_target * x_split
 
-            #print(f"Target: {target} index {index}")
             return_arr[target].append(patches[index])
-    print(get_patches_shape(return_arr[0]))
-    print(get_patches_shape(return_arr[1]))
+
     return return_arr
 
-def write_to_GEOJSON(patches_a):
+def update_probs(patch, shapes):
+    for i in range(len(shapes)):
+        ind = shapes[i][2]
+        p = patch[ind][1]
+        shapes[i][1] = p
+    return shapes
+
+
+def generate_app_update(update, update_grainy):
+    sig_u = security_utils.sign_data("./res/private.key", update.encode("utf8"))
+    sig_g = security_utils.sign_data("./res/private.key", update_grainy.encode("utf8"))
+
+    json_o = {"update": {
+                    "data": update,
+                    "signature": sig_u.decode("utf8")
+                    },
+                "update_grainy": {
+                    "data": update_grainy,
+                    "signature": sig_g.decode("utf8")
+                }
+              }
+
+    json_s = json.dumps(json_o)
+    return json_s
+
+def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
+
     print(f"Patcheese length: {len(patches_a)}")
     patches_shape = get_patches_shape(patches_a)
     patches_d = subdivide_patches(patches_a, 100)
     print(patches_shape)
+
     for i in range(len(patches_d)):
         patches = patches_d[i]
-        #patches = patches_a[i:min(i + 5000, len(patches_a))]
-
         data = {}
         crs = {'type': 'name', 'properties': {'name': 'EPSG:4326'}}
         data['type'] = 'FeatureCollection'
@@ -115,52 +159,91 @@ def write_to_GEOJSON(patches_a):
         data_grainy['type'] = 'FeatureCollection'
         data_grainy['crs'] = crs2
         data_grainy['features'] = []
+        if not reparse:
+            patches_shape = get_patches_shape(patches)
+            super_patch = create_super_patch(patches, patches_shape)
+            shapes_tmp = read_dump_from_file(constants.pwd + f"/data/tmp/tmp-shapes{i}.dump")
+            final_shapes = update_probs(super_patch, shapes_tmp)
 
-        patches_shape = get_patches_shape(patches)
-        super_patch = create_super_patch(patches, patches_shape)
+        elif reduce_shapes:
+            patches_shape = get_patches_shape(patches)
+            super_patch = create_super_patch(patches, patches_shape)
 
-        dist_x = constants.point_dist / get_lat_fac() / 2.0
+            dist_x = constants.point_dist / get_lat_fac() / 2.0
 
-        print("Reducing Amount of Shapes")
-        final_shapes = shape_reduction(super_patch, dist_x, -1, patches_shape[0] * 10, patches_shape[1] * 10)
+            print("Reducing Amount of Shapes")
+            final_shapes = shape_reduction(super_patch, dist_x, -1, patches_shape[0] * 10, patches_shape[1] * 10)
 
-        print("Removing Shapes with Probability 0")
-        final_shapes = remove_zero_shapes(final_shapes)
+            print("Removing Shapes with Probability 0")
+            final_shapes = remove_zero_shapes(final_shapes)
 
-        print("Amount of Datapoints before: " + str(len(patches) * len(patches[0].dates)))
-        print("Amount of Datapoints after: " + str(len(final_shapes)))
+            print("Amount of Datapoints before: " + str(len(patches) * len(patches[0].dates)))
+            print("Amount of Datapoints after: " + str(len(final_shapes)))
+
+
+        else:
+            final_shapes = patches
+
+        final_shapes = remove_points(final_shapes)
         grainy_shapes = make_shapes_grainy(final_shapes)
-        for j in range(len(final_shapes)):
-            new_cords = final_shapes[j][0]
-            new_cords.append(new_cords[0])
-            geom = {}
-            #props = {'color': 'rgba(0, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
-            props = {'color': 'rgba(0, 255, 0 , ' + str(min(0.5 * final_shapes[j][1], 0.5)) + ')'}
-            geom['type'] = 'Polygon'
-            # geom['coordinates'] = [coordinates]
-            geom['coordinates'] = [new_cords]
-            data['features'].append({
-                'type': 'Feature',
-                'geometry': geom,
-                'properties': props
-            })
 
-        for j in range(len(grainy_shapes)):
-            new_cords = grainy_shapes[j][0]
-            new_cords.append(new_cords[0])
-            geom = {}
-            #props = {'color': 'rgba(0, 255, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
-            props = {'color': 'rgba(0, 255, 0, ' + str(min(0.5 * grainy_shapes[j][1], 0.5)) + ')'}
-            geom['type'] = 'Polygon'
-            # geom['coordinates'] = [coordinates]
-            geom['coordinates'] = [new_cords]
-            data_grainy['features'].append({
-                'type': 'Feature',
-                'geometry': geom,
-                'properties': props
-            })
+        dump_to_file(final_shapes, constants.pwd + f"/data/tmp/tmp-shapes{i}.dump")
+        dump_to_file(grainy_shapes, constants.pwd + f"/data/tmp/tmp-shapes-grainy{i}.dump")
 
-        with open(constants.pwd + f'/web/data{i}.json', 'w') as outfile:
-            json.dump(data, outfile)
-        with open(constants.pwd + f'/web/data_grainy{i}.json', 'w') as outfile:
-            json.dump(data_grainy, outfile)
+    final_shapes = []
+    grainy_shapes = []
+    for i in range(len(patches_d)):
+        final_shapes.extend(read_dump_from_file(constants.pwd + f"/data/tmp/tmp-shapes{i}.dump"))
+        grainy_shapes.extend(read_dump_from_file(constants.pwd + f"/data/tmp/tmp-shapes-grainy{i}.dump"))
+
+    final_props = ""
+    final_props_grainy = ""
+
+    for j in range(len(final_shapes)):
+        new_cords = final_shapes[j][0]
+        new_cords.append(new_cords[0])
+        geom = {}
+        #props = {'color': 'rgba(0, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
+        col_val = f"0,128,0,{str(min(0.5 * final_shapes[j][1], 0.5))}"
+        props = {'color': f'rgba({col_val})'}
+        geom['type'] = 'Polygon'
+        geom['coordinates'] = [new_cords]
+        data['features'].append({
+            'type': 'Feature',
+            'geometry': geom,
+            'properties': props
+        })
+        final_props += col_val + ";"
+
+    for j in range(len(grainy_shapes)):
+        new_cords = grainy_shapes[j][0]
+        new_cords.append(new_cords[0])
+        geom = {}
+        #props = {'color': 'rgba(0, 255, ' + str(random.randint(0, 255)) + ', ' + str(random.randint(0, 255)) + ')'}
+        col_val = f"0, 128, 0, {str(min(0.5 * grainy_shapes[j][1], 0.5))}"
+        props = {'color': f'rgba({col_val})'}
+        geom['type'] = 'Polygon'
+        geom['coordinates'] = [new_cords]
+        data_grainy['features'].append({
+            'type': 'Feature',
+            'geometry': geom,
+            'properties': props
+        })
+        final_props_grainy += col_val + ";"
+
+    day = datetime.datetime.today().day
+    file_name = constants.pwd + f'/web/data/data{day}.json'
+    file_name_grainy = constants.pwd + f'/web/data/data_grainy{day}.json'
+
+    update_file = generate_app_update(final_props, final_props_grainy)
+
+    with open(file_name, 'w') as outfile:
+        json.dump(data, outfile)
+    with open(file_name_grainy, 'w') as outfile:
+        json.dump(data_grainy, outfile)
+    with open(constants.pwd + f'/web/publish/update_data.txt', 'w') as outfile:
+        outfile.write(final_props)
+    with open(constants.pwd + f'/web/publish/update_data_grainy.txt', 'w') as outfile:
+        outfile.write(final_props_grainy)
+    with open(constants.pwd + f'/web/publish/update_file.json', 'w') as outfile:
+        outfile.write(update_file)

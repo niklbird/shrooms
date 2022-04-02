@@ -1,5 +1,6 @@
 web/node_modules
-web/old
+web/data
+web/publish
 web/js
 *.shp
 src/.idea
@@ -7,3 +8,14 @@ src/.idea
 *.zip
 *.xml
 .idea
+web/*.json
+data/dumps/
+data/tmp/
+data/soil_folder/
+web/update_data.txt
+web/update_data_grainy.txt
+web/dist/
+*.key
+*.pem
+*.sig
+*.dump
