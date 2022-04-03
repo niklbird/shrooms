@@ -7,7 +7,7 @@ import math
 import datetime
 import json
 import security_utils
-
+import soil
 '''
 Utilities to deal with IO-Operations. This includes writing the final data to a GEOJSON file.
 '''
@@ -157,8 +157,13 @@ def generate_app_update(update, update_grainy):
     return json_s
 
 
+def get_short_name(db, soil):
+    return db[soil.lower()].attr['short'].title()
+
 def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
     patches_shape = get_patches_shape(patches_a)
+
+    soil_db = soil.read_soil_XML('../data/soil_databank.xml')
 
     # Subdivide patches to ease calculation
     # This is necessary as the shape-reduction algorithm works recursively
@@ -225,7 +230,8 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         new_cords.append(new_cords[0])
         geom = {}
         col_val = f"0,128,0,{str(min(0.8* 2 * final_shapes[j][1], 0.8))}"
-        props = {'color': f'rgba({col_val})', 'trees': final_shapes[j][2][2]}
+        props = {'color': f'rgba({col_val})', 'trees': final_shapes[j][2][2],
+                 'soil': get_short_name(soil_db, final_shapes[j][2][1])}
         geom['type'] = 'Polygon'
         geom['coordinates'] = [new_cords]
         data['features'].append({

@@ -31,7 +31,7 @@ html, body {
   border: 1px solid #ffffff;
   bottom: 12px;
   left: -50px;
-  min-width: 200px;
+  min-width: 250px;
   font-family: 'Roboto', sans-serif;
 }
 .ol-popup:after, .ol-popup:before {
