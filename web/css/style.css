@@ -26,16 +26,13 @@ html, body {
   position: absolute;
   background-color: white;
   box-shadow: 0 1px 4px rgba(0,0,0,0.5);
-  padding: 1px;
+  padding: 5px;
   border-radius: 6px;
   border: 1px solid #ffffff;
   bottom: 12px;
   left: -50px;
-  min-width: 280px;
+  min-width: 200px;
   font-family: 'Roboto', sans-serif;
-  font-weight: bold;
-  text-align: center;
-
 }
 .ol-popup:after, .ol-popup:before {
   top: 100%;

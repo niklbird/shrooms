@@ -1,6 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mushrooms>
   <mushroom>
+    <name lang="de">Hardwood</name>
+    <seasonStart>4</seasonStart>
+    <seasonEnd>11</seasonEnd>
+    <woodtype>Hardwood</woodtype>
+    <trees>Fichte,Kiefer</trees>
+    <habitat>Wald,Wiese</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Tödlich</poison>
+    <page> -1 </page>
+  </mushroom>
+    <mushroom>
+    <name lang="de">Softwood</name>
+    <seasonStart>4</seasonStart>
+    <seasonEnd>11</seasonEnd>
+    <woodtype>Softwood</woodtype>
+    <trees>Fichte,Kiefer</trees>
+    <habitat>Wald,Wiese</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Tödlich</poison>
+    <page> -1 </page>
+  </mushroom>
+    <mushroom>
+    <name lang="de">Forrest</name>
+    <seasonStart>4</seasonStart>
+    <seasonEnd>11</seasonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte,Kiefer</trees>
+    <habitat>Wald,Wiese</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Tödlich</poison>
+    <page> -1 </page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Meadow</name>
+    <seasonStart>4</seasonStart>
+    <seasonEnd>11</seasonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte,Kiefer</trees>
+    <habitat>Wald,Wiese</habitat>
+    <ph>All</ph>
+    <soil>All</soil>
+    <commonness>Selten</commonness>
+    <poison>Tödlich</poison>
+    <page> -1 </page>
+  </mushroom>
+  <mushroom>
+    <name lang="de">Sour</name>
+    <seasonStart>4</seasonStart>
+    <seasonEnd>11</seasonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte,Kiefer</trees>
+    <habitat>Wald,Wiese</habitat>
+    <ph>Sauer</ph>
+    <soil>All</soil>
+    <commonness>Häufig</commonness>
+    <poison>Tödlich</poison>
+    <page> -1 </page>
+  </mushroom>
+        <mushroom>
+    <name lang="de">Basic</name>
+    <seasonStart>4</seasonStart>
+    <seasonEnd>11</seasonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte,Kiefer</trees>
+    <habitat>Wald,Wiese</habitat>
+    <ph>Basisch</ph>
+    <soil>All</soil>
+    <commonness>Selten</commonness>
+    <poison>Tödlich</poison>
+    <page> -1 </page>
+  </mushroom>
+
+  <mushroom>
+    <name lang="de">Gelber Knollenblätterpilz</name>
+    <seasonStart>8</seasonStart>
+    <seasonEnd>11</seasonEnd>
+    <woodtype>Hardwood, Softwood</woodtype>
+    <trees>Fichte,Kiefer</trees>
+    <habitat>Wald</habitat>
+    <ph>Sauer</ph>
+    <soil>Sand</soil>
+    <commonness>Häufig</commonness>
+    <poison>Tödlich</poison>
+    <page> 10 </page>
+  </mushroom>
+
+  <mushroom>
     <name lang="de">Gelber Knollenblätterpilz</name>
     <seasonStart>8</seasonStart>
     <seasonEnd>11</seasonEnd>

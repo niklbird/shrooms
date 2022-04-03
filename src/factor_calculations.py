@@ -2,7 +2,6 @@ import mushroom
 import datetime
 import utils
 import soil
-from numba import jit
 
 
 def tree_value(mushroom, tree_type: str):
@@ -11,7 +10,8 @@ def tree_value(mushroom, tree_type: str):
         com_fac = 0.33
     hardwood = 0
     if tree_type == "Mischwaelder" or tree_type == "Laubwaelder":
-        hardwood = 1
+        # Think about if this makes sense
+        hardwood = 0.97
     softwood = 0
     if tree_type == "Mischwaelder" or tree_type == "Nadelwaelder":
         softwood = 1
@@ -21,7 +21,8 @@ def tree_value(mushroom, tree_type: str):
 
     wiesen = ["Wiesen und Weiden", "Natuerliches Gruenland", "Heiden und Moorheiden", "Wald-Strauch-Uebergangsstadien"]
     if "wiese" in mushroom.attr['habitat'].lower() and tree_type in wiesen:
-        wood_type_factor = 1.0
+        # In meadows, the factor is a lot lower to find anything
+        wood_type_factor = max(0.3, wood_type_factor)
 
     # In the future, this could also consider specific trees
     return wood_type_factor * com_fac

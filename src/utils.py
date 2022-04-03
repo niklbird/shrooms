@@ -345,6 +345,13 @@ def get_patches_shape(patches):
         c += 1
     return c + 1, int(len(patches) / (c + 1))
 
+def blend_probabilities(date):
+    example_shrooms = ['Hardwood', 'Softwood', 'Forrest', 'Meadow', 'Sour', 'Basic']
+
+    final_prop = 0.0
+    for shroom in example_shrooms:
+        final_prop += date.probabilities[shroom]
+    return final_prop / float(len(example_shrooms))
 
 def create_super_patch(patches, patches_shape):
     # We created patches for better data processing
@@ -371,9 +378,11 @@ def create_super_patch(patches, patches_shape):
                 for k in range(constants.points_per_patch_sqrt):
                     date = patch_i.dates[i * p_a + k]
                     point = date.coord
-                    prop = date.probabilities['Steinpilz']
+                    #prop = date.probabilities['Steinpilz']
+                    prop = blend_probabilities(date)
 
-                    final_array.append([[point[1], point[0]], prop, shape_id, dist_y])
+                    info_array = [shape_id, date.soil, date.trees]
+                    final_array.append([[point[1], point[0]], prop, info_array, dist_y])
                     shape_id += 1
     return final_array
 

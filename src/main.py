@@ -26,8 +26,8 @@ def main(Reparse, Recover, Recalc, Publish):
         #start_cord = [50.524417, 7.414111]
         #end_cord = [49.329227, 10.083789]
 
-        start_cord = [50.009629, 8.216685]
-        end_cord = [49.475836, 9.642161]
+        start_cord = [49.938751, 8.733386]
+        end_cord = [49.697298, 9.183825]
 
         patches_per_run = 1000
 
