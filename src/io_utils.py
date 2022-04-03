@@ -130,6 +130,7 @@ Update probabilities with the update-data
 def update_probs(patch, shapes):
     for i in range(len(shapes)):
         ind = shapes[i][2][0]
+        a = patch[ind]
         p = patch[ind][1]
         shapes[i][1] = p
     return shapes
@@ -245,7 +246,7 @@ def write_to_GEOJSON(patches_a, reparse, reduce_shapes=True):
         new_cords = grainy_shapes[j][0]
         new_cords.append(new_cords[0])
         geom = {}
-        col_val = f"0, 128, 0, {str(min(0.5 * grainy_shapes[j][1], 0.5))}"
+        col_val = f"0, 128, 0, {str(min(0.8 * grainy_shapes[j][1], 0.8))}"
         props = {'color': f'rgba({col_val})'}
         geom['type'] = 'Polygon'
         geom['coordinates'] = [new_cords]

@@ -25,14 +25,18 @@ html, body {
 .ol-popup {
   position: absolute;
   background-color: white;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
-  padding: 5px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  padding: 10px;
   border-radius: 6px;
   border: 1px solid #ffffff;
   bottom: 12px;
   left: -50px;
   min-width: 250px;
   font-family: 'Roboto', sans-serif;
+  color: rgb(95, 95, 104);
+  line-height: 1.3;
+
+
 }
 .ol-popup:after, .ol-popup:before {
   top: 100%;
@@ -63,5 +67,5 @@ html, body {
 }
 .ol-popup-closer:after {
   content: "✖";
-  color: gray;
+  color: rgb(95, 95, 104);
 }

@@ -254,7 +254,7 @@
   </soil>
   <soil>
     <name lang="de">Braunerde / Podsol Braunerde aus harten Ton- und Schluffschiefern mit Anteilen von Grauwacke, Sandstein, Quarzit und Phyllit</name>
-    <short>aBraunerde</short>
+    <short>Braunerde</short>
     <ph>Neutral</ph>
     <nitrat>Niedrig</nitrat>
     <score>0.4</score>
