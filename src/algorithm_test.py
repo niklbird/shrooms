@@ -1,4 +1,6 @@
 import random
+
+from cv2.cv2 import VideoWriter_fourcc
 from numba import jit
 import numpy as np
 from matplotlib import pyplot as plt

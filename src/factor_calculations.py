@@ -90,6 +90,7 @@ def calc_dynamic_value(patches):
         # Look at weather of last 30 days
         for i in range(30, 1, -1):
             ts = utils.format_timestamp(datetime.datetime.today() - datetime.timedelta(days=i))
+            print(weather[ts])
             if weather[ts] is None or weather[ts]['temperature'] is None or weather[ts]['rain'] is None:
                 temperatures.append(0)
                 rains.append(0)
@@ -102,7 +103,10 @@ def calc_dynamic_value(patches):
         rain_val, temp_val, hum_val = environment_factor(rains, temperatures, humidities)
 
         # Factors may have to be tweaked
-        dynamic_factor = (2 * rain_val + 1 * temp_val + 0.7 * hum_val) / 3.7
+        dynamic_factor = ((1 - (1 - rain_val[i]) ** 2) * 1 * (1 - (1 - temp_val[i]) ** 2) * 1 * (1 - (1 - hum_val[i]) ** 2))
+
+        # Old factor
+        # dynamic_factor = (2 * rain_val + 1 * temp_val + 0.7 * hum_val) / 3.7
 
         for date in patch.dates:
             for shroom in date.mushrooms.keys():
@@ -115,7 +119,7 @@ def temp_deviation(temp, opt_val):
     if temp < opt_val:
         return temp / opt_val
     elif temp > opt_val + 5:
-        return opt_val / temp
+        return (opt_val + 5) / temp
     else:
         return 1.0
 
@@ -126,30 +130,35 @@ def environment_factor(rain, temperature, humidity):
     ra = 0
     temp = 0
     hum = 0
-    optimal_temp = 15
-    optimal_rain = 0.3
+    optimal_temp = 13
+    optimal_rain = 0.35
     optimal_humidty = 90
     for j in range(0, 14):
         # If 10mm is perfect amount, this measures the normalized contribution
-        ra += 0.5 * min(rain[j], 25) / 14
-        temp += 0.3 * temp_deviation(temperature[j], optimal_temp) / 14
+        ra += 0.5 * float(rain[j]) / 14
+        temp += 0.3 * temp_deviation(float(temperature[j]), optimal_temp) / 14
         if humidity[j] is None:
             humidity[j] = 60
-        hum += humidity[j] / optimal_humidty / 14
+        hum += ((float(humidity[j]) - 50) / (optimal_humidty - 50))**2 / 14
     # Emphasize 2-1 week ago
     for j in range(14, 21):
-        ra += 3 * min(rain[j], 25) / 7
-        temp += 0.75 * temp_deviation(temperature[j], optimal_temp) / 7
+        ra += 3 * float(rain[j]) / 7
+        temp += 0.75 * temp_deviation(float(temperature[j]), optimal_temp) / 7
         if humidity[j] is None:
             humidity[j] = 60
-        hum += humidity[j] / optimal_humidty / 7
+        hum += ((float(humidity[j]) - 50) / (optimal_humidty - 50))**2 / 7
     for j in range(21, 28):
-        ra += 0.75 * min(rain[j], 25) / 7
-        temp += 2 * temp_deviation(temperature[j], optimal_temp) / 7
+        ra += 0.75 * float(rain[j]) / 7
+        temp += 2 * temp_deviation(float(temperature[j]), optimal_temp) / 7
         if humidity[j] is None:
             humidity[j] = 60
-        hum += humidity[j] / optimal_humidty / 7
+        hum += ((float(humidity[j]) - 50) / (optimal_humidty - 50))**2 / 7
     norm_rain = 0.5 * 14 + 3 * 7 + 7 * 0.75
-    norm_temp = 3
-    norm_hum = 2.0
-    return min(ra / norm_rain / optimal_rain, 3), min(temp / norm_temp, 3), hum / norm_hum
+    norm_temp = 3.0
+    norm_hum = 2.2
+
+    ra = max(ra, 0)
+    hum = max(hum, 0)
+    temp = max(temp, 0)
+
+    return min(ra / norm_rain / optimal_rain, 1), min(temp / norm_temp, 1), min(hum / norm_hum, 1)
